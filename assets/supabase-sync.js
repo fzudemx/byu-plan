@@ -1,6 +1,6 @@
 (function () {
   var SUPABASE_URL = 'https://nznqbsbjqwmliovndfre.supabase.co';
-  var ANON_KEY = '1dadfb46-99ce-4bd5-bc9e-0c2438a122a9';
+  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56bnFic2JqcXdtbGlvdm5kZnJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MzAzNDQsImV4cCI6MjA5MjEwNjM0NH0.99LHl75Af1w0t7cqnFflRUS2gJOArQcK0ZcYHt9Q7wY';
   var PREFIX = 'byu-v5-';
   var SYNCED = 'sb_synced_v1';
 
