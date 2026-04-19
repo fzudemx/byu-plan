@@ -7,18 +7,20 @@
   /* ── styles ── */
   var css = document.createElement('style');
   css.textContent = [
-    '#sb-ov{position:fixed;inset:0;background:#111827;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}',
-    '#sb-box{background:#1f2937;border-radius:20px;padding:40px 32px;width:320px;text-align:center;color:#f9fafb;box-shadow:0 25px 60px rgba(0,0,0,.6)}',
-    '#sb-box h2{margin:0 0 4px;font-size:26px;font-weight:700}',
-    '#sb-box .sub{color:#9ca3af;font-size:14px;margin:0 0 28px}',
+    '#sb-ov{position:fixed;inset:0;background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}',
+    '#sb-box{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(168,85,247,.25);border-radius:24px;padding:44px 36px;width:320px;text-align:center;color:#f0ecff;box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)}',
+    '#sb-logo{font-size:36px;margin-bottom:8px}',
+    '#sb-box h2{margin:0 0 4px;font-size:26px;font-weight:700;background:linear-gradient(90deg,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}',
+    '#sb-box .sub{color:#a99bc8;font-size:14px;margin:0 0 28px}',
     '#sb-form{display:flex;flex-direction:column;gap:12px}',
-    '#sb-form input{padding:13px 16px;border-radius:10px;border:1px solid #374151;background:#111827;color:#f9fafb;font-size:15px;outline:none;transition:border-color .2s}',
-    '#sb-form input:focus{border-color:#6366f1}',
-    '.sb-btn{padding:14px;border-radius:10px;border:none;cursor:pointer;font-size:15px;font-weight:600;transition:opacity .2s}',
-    '.sb-btn:hover{opacity:.85}',
-    '.sb-p{background:#6366f1;color:#fff}',
-    '.sb-s{background:#1f2937;color:#d1d5db;border:1px solid #374151;margin-top:2px}',
-    '#sb-msg{color:#9ca3af;font-size:14px;min-height:20px;margin-bottom:8px}',
+    '#sb-form input{padding:13px 16px;border-radius:12px;border:1px solid rgba(168,85,247,.3);background:rgba(255,255,255,.05);color:#f0ecff;font-size:15px;outline:none;transition:border-color .2s;backdrop-filter:blur(8px)}',
+    '#sb-form input:focus{border-color:#a855f7;background:rgba(168,85,247,.08)}',
+    '#sb-form input::placeholder{color:#7c6aaa}',
+    '.sb-btn{padding:14px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-weight:600;transition:all .2s}',
+    '.sb-btn:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(168,85,247,.4)}',
+    '.sb-p{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff}',
+    '.sb-s{background:rgba(255,255,255,.06);color:#c4b5fd;border:1px solid rgba(168,85,247,.25);margin-top:2px}',
+    '#sb-msg{color:#a99bc8;font-size:14px;min-height:20px;margin-bottom:8px}',
     '#sb-err{color:#f87171;font-size:13px;min-height:18px;margin-top:4px}'
   ].join('');
   document.head.appendChild(css);
@@ -27,6 +29,7 @@
   var ov = document.createElement('div');
   ov.id = 'sb-ov';
   ov.innerHTML = '<div id="sb-box">' +
+    '<div id="sb-logo">&#127939;</div>' +
     '<h2>BYU Plan</h2><p class="sub">Dein persönlicher Trainingsplan</p>' +
     '<p id="sb-msg">Wird geladen\u2026</p>' +
     '<div id="sb-fw" style="display:none">' +
