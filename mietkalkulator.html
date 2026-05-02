@@ -199,11 +199,19 @@
       color: var(--text2); font-size: 11px;
       border-top: 1px solid var(--border); margin-top: 28px;
     }
+    .back-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text2);
+      text-decoration: none; margin-bottom: 10px;
+      transition: color .15s;
+    }
+    .back-nav:hover { color: var(--accent); }
   </style>
 </head>
 <body>
 
 <header>
+  <a class="back-nav" href="/byu-plan/">← Dashboard</a>
   <h1>🏠 Immobilien-Renditerechner</h1>
   <p>Cashflow- &amp; Steueranalyse für Kaufimmobilien zur Vermietung · Region Hannover / Hildesheim / Göttingen · Stand 2025/2026</p>
 </header>
