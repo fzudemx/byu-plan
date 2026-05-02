@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rennrad Konfigurator · byu-plan</title>
+  <link rel="icon" type="image/svg+xml" href="/byu-plan/favicon.svg" />
+  <style>
+    :root {
+      --bg: #0f0f14; --surface: #1a1a24; --surface2: #22222e;
+      --border: #2e2e3d; --text: #e8e8f0; --text2: #9090a8;
+      --accent: #6c8dfa; --accent2: #a78bfa;
+      --green: #4ade80; --yellow: #fbbf24; --red: #f87171;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px; line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+    }
+    header h1 { font-size: 21px; font-weight: 700; margin-bottom: 3px; }
+    header p { color: var(--text2); font-size: 13px; }
+    .back-nav {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; color: var(--text2); text-decoration: none;
+      margin-bottom: 10px; transition: color .15s;
+    }
+    .back-nav:hover { color: var(--accent); }
+
+    .mobile-bar {
+      display: none; position: sticky; top: 0; z-index: 100;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 20px; justify-content: space-between; align-items: center;
+    }
+    .mobile-bar-label { font-size: 12px; color: var(--text2); }
+    .mobile-bar-price { font-size: 18px; font-weight: 800; color: var(--accent); }
+    .mobile-bar-weight { font-size: 11px; color: var(--text2); }
+    @media (max-width: 960px) { .mobile-bar { display: flex; } }
+
+    .container {
+      max-width: 1300px; margin: 0 auto; padding: 24px;
+      display: grid; grid-template-columns: 1fr 320px;
+      gap: 20px; align-items: start;
+    }
+    @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
+
+    .config-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .section-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .section-head {
+      padding: 13px 18px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--border); color: var(--text2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+      transition: background .2s, color .2s;
+    }
+    .step-num.done { background: var(--green); color: #0f0f14; }
+    .section-head h2 { font-size: 14px; font-weight: 700; flex: 1; }
+    .sel-badge {
+      font-size: 11px; color: var(--green);
+      background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.25);
+      border-radius: 20px; padding: 2px 9px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; max-width: 160px;
+    }
+
+    .filter-row { padding: 12px 16px 0; display: flex; gap: 7px; }
+    .fbtn {
+      padding: 4px 14px; border-radius: 20px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); font-size: 12px; cursor: pointer;
+      font-family: inherit; transition: all .15s;
+    }
+    .fbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .options-grid {
+      padding: 14px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
+
+    .opt-card {
+      background: var(--surface2); border: 2px solid var(--border);
+      border-radius: 10px; padding: 13px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .opt-card:hover { border-color: #4a5080; }
+    .opt-card.selected { border-color: var(--accent); background: rgba(108,141,250,.07); }
+    .check-ico {
+      position: absolute; top: 10px; right: 10px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent); display: none;
+      align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; font-weight: 700;
+    }
+    .opt-card.selected .check-ico { display: flex; }
+
+    .opt-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; padding-right: 26px; }
+    .opt-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 7px; }
+    .opt-tag {
+      font-size: 10px; padding: 2px 7px; border-radius: 20px;
+      background: var(--border); color: var(--text2);
+    }
+    .opt-tag.ac { background: rgba(108,141,250,.15); color: var(--accent); }
+    .opt-tag.gr { background: rgba(74,222,128,.12); color: var(--green); }
+    .opt-tag.yl { background: rgba(251,191,36,.12); color: var(--yellow); }
+
+    .opt-spec { font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+    .opt-spec strong { color: var(--text); }
+    .opt-desc { font-size: 11px; color: var(--text2); line-height: 1.45; }
+    .opt-inkl { font-size: 10px; color: var(--text2); margin-top: 5px; font-style: italic; }
+    .opt-price { font-size: 17px; font-weight: 800; color: var(--accent); margin-top: 9px; }
+
+    .summary-col { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 14px; }
+    @media (max-width: 960px) { .summary-col { position: static; } }
+
+    .sum-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .sum-head {
+      padding: 13px 18px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .sum-head h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+
+    .price-banner { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .price-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text2); margin-bottom: 4px; }
+    .price-total { font-size: 34px; font-weight: 800; color: var(--accent); line-height: 1; }
+    .weight-row { display: flex; gap: 16px; margin-top: 6px; }
+    .weight-item { font-size: 12px; color: var(--text2); }
+    .weight-item strong { color: var(--text); }
+
+    .comp-list { padding: 10px 18px; }
+    .comp-item {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 7px 0; border-bottom: 1px solid var(--border); gap: 8px;
+    }
+    .comp-item:last-child { border-bottom: none; }
+    .comp-kat { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text2); display: block; margin-bottom: 1px; }
+    .comp-name { font-size: 12px; font-weight: 600; color: var(--text); }
+    .comp-missing { font-size: 12px; color: var(--text2); font-style: italic; }
+    .comp-price { font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap; padding-top: 12px; }
+
+    .compat-box { padding: 0 18px 10px; }
+    .compat-item {
+      display: flex; gap: 7px; font-size: 11px; color: var(--text2);
+      padding: 5px 0; border-top: 1px solid var(--border);
+      align-items: flex-start; line-height: 1.5;
+    }
+    .compat-ico { flex-shrink: 0; font-size: 13px; }
+
+    .copy-btn {
+      display: block; width: calc(100% - 36px); margin: 0 18px 16px;
+      padding: 10px; background: var(--accent); color: #fff;
+      border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: opacity .15s;
+    }
+    .copy-btn:hover { opacity: .85; }
+
+    footer {
+      text-align: center; padding: 20px; margin-top: 20px;
+      color: var(--text2); font-size: 11px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-nav" href="/byu-plan/">← Dashboard</a>
+  <h1>🚴 Rennrad Konfigurator</h1>
+  <p>Carbon-Rahmen &amp; Komponenten aus China · Shimano &amp; SRAM Schaltgruppen · Preise ca. (Stand 2025)</p>
+</header>
+
+<div class="mobile-bar">
+  <div>
+    <div class="mobile-bar-label">Gesamtpreis</div>
+    <div class="mobile-bar-weight" id="mb-weight">Gewicht: – kg</div>
+  </div>
+  <div class="mobile-bar-price" id="mb-price">€ 0</div>
+</div>
+
+<div class="container">
+  <div class="config-col" id="config-col"></div>
+
+  <div class="summary-col">
+    <div class="sum-card">
+      <div class="sum-head"><h2>🚲 Dein Traumrad</h2></div>
+      <div class="price-banner">
+        <div class="price-label">Gesamtpreis (ca.)</div>
+        <div class="price-total" id="sum-price">€ 0</div>
+        <div class="weight-row">
+          <div class="weight-item">Gewicht: <strong id="sum-weight">– kg</strong></div>
+        </div>
+      </div>
+      <div class="comp-list" id="comp-list"></div>
+      <div class="compat-box" id="compat-box"></div>
+      <button class="copy-btn" onclick="kopieren()">Konfiguration kopieren</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Alle Preise sind Richtwerte · China-Direktimport (AliExpress, Hersteller-Websites) ·
+  Shimano &amp; SRAM sind eingetragene Marken · Keine Gewähr für Aktualität oder Verfügbarkeit
+</footer>
+
+<script>
+const TEILE = {
+  rahmen: [
+    {
+      id: 'dengfu-fm686', name: 'Dengfu FM686', typ: 'Aero',
+      material: 'Carbon T700', gewicht: 820, preis: 449, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
+      beschreibung: 'Einer der beliebtesten Aerorahmen aus China. Internes Kabelrouting für Di2 & eTap, interne Bremsleitung'
+    },
+    {
+      id: 'trifox-x16', name: 'Trifox X16', typ: 'Endurance',
+      material: 'Carbon T800', gewicht: 990, preis: 379, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz',
+      beschreibung: 'Komfortabler Endurance-Rahmen mit erhöhtem Stack. Ideal für lange Ausfahrten und Gran Fondo'
+    },
+    {
+      id: 'twitter-cyclone', name: 'Twitter Cyclone Pro', typ: 'Aero',
+      material: 'Carbon T700', gewicht: 870, preis: 419, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
+      beschreibung: 'Windschnittiges Design mit semi-integriertem Cockpit. Vollständiges internes Kabelrouting'
+    },
+    {
+      id: 'lightcarbon-833', name: 'LightCarbon LC-833', typ: 'Kletter',
+      material: 'Carbon T1000', gewicht: 720, preis: 549, bremse: 'Disc/Rim',
+      inkl: 'Rahmen, Gabel, Steuersatz',
+      beschreibung: 'Ultraleichter Kletterrahmen aus hochwertigem T1000-Carbon. Für ambitionierte Bergfahrer'
+    },
+    {
+      id: 'sava-herd', name: 'Sava Herd 7.0', typ: 'All-round',
+      material: 'Carbon T800', gewicht: 960, preis: 319, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz, Sattelstütze',
+      beschreibung: 'Günstiger Einstieg in Carbon-Rennräder. Gutes Preis-Leistungs-Verhältnis, einsteigerfreundlich'
+    },
+    {
+      id: 'ourea-r5', name: 'Ourea R5 Disc', typ: 'Race',
+      material: 'Carbon T800/T1000', gewicht: 840, preis: 489, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
+      beschreibung: 'Modernes Race-Design, Mischung aus T800 und T1000 Carbon. Steif und leicht zugleich'
+    },
+  ],
+  schaltgruppe: [
+    {
+      id: 'shi-105-mech', name: 'Shimano 105 R7100', marke: 'shimano',
+      typ: 'Mechanisch', gaenge: '2×12', gewicht: 2748, preis: 349,
+      beschreibung: 'Zuverlässiger Einstieg ins 12-Gang-System. Kabelgesteuert, sehr wartungsfreundlich und langlebig'
+    },
+    {
+      id: 'shi-105-di2', name: 'Shimano 105 Di2', marke: 'shimano',
+      typ: 'Elektronisch', gaenge: '2×12', gewicht: 2552, preis: 749,
+      beschreibung: 'Elektronisches Schalten mit identischer Logik wie Ultegra Di2. Präzise, wartungsarm, Topwert'
+    },
+    {
+      id: 'shi-ultegra-di2', name: 'Shimano Ultegra Di2', marke: 'shimano',
+      typ: 'Elektronisch', gaenge: '2×12', gewicht: 2338, preis: 1099,
+      beschreibung: 'Semi-Pro Technologie. Leichter als 105 Di2, identische Firmware wie Dura-Ace. Absoluter Top-Tipp'
+    },
+    {
+      id: 'shi-duraace-di2', name: 'Shimano Dura-Ace Di2', marke: 'shimano',
+      typ: 'Elektronisch', gaenge: '2×12', gewicht: 1902, preis: 2399,
+      beschreibung: 'Shimanos Spitzenklasse. Titanschrauben, CNC-Finish, UCI Pro Tour Standard'
+    },
+    {
+      id: 'sram-rival', name: 'SRAM Rival eTap AXS', marke: 'sram',
+      typ: 'Kabellos', gaenge: '2×12', gewicht: 2612, preis: 649,
+      beschreibung: 'Günstigster Einstieg ins kabellose Schalten. XDR-Freilaufkörper am Laufrad erforderlich'
+    },
+    {
+      id: 'sram-force', name: 'SRAM Force eTap AXS', marke: 'sram',
+      typ: 'Kabellos', gaenge: '2×12', gewicht: 2358, preis: 949,
+      beschreibung: 'Kabellos & leicht. Ausgezeichnetes Preis-Leistungs-Verhältnis im SRAM-Lineup'
+    },
+    {
+      id: 'sram-red', name: 'SRAM Red eTap AXS', marke: 'sram',
+      typ: 'Kabellos', gaenge: '2×12', gewicht: 2012, preis: 2149,
+      beschreibung: 'SRAMs Flaggschiff. Carbon-Kurbel, geringstes Gewicht, maximale Schaltpräzision'
+    },
+  ],
+  laufraeder: [
+    {
+      id: 'yoeleo-r38', name: 'Yoeleo R38', profil: '38mm', felge: '25mm int.',
+      gewicht: 1460, preis: 349,
+      beschreibung: 'Niedriges Profil für Berge & Wind. Sehr vielseitig, ideal für hügeliges Terrain'
+    },
+    {
+      id: 'yoeleo-r51', name: 'Yoeleo R51', profil: '50mm', felge: '25mm int.',
+      gewicht: 1520, preis: 389,
+      beschreibung: 'Meistverkauftes China-Laufrad. Gutes Allround-Profil für Rennen & Training'
+    },
+    {
+      id: 'lightcarbon-r50', name: 'LightCarbon LC-R50C', profil: '50mm', felge: '28mm int.',
+      gewicht: 1480, preis: 359,
+      beschreibung: 'Breite 28mm-Felge für mehr Fahrkomfort und Volumenreifen. Hookless-Design'
+    },
+    {
+      id: 'winspace-hyper', name: 'Winspace Hyper 50', profil: '50mm', felge: '25mm int.',
+      gewicht: 1390, preis: 429,
+      beschreibung: 'Premium-Laufrad aus China. Sapim CX-Ray Speichen seriensmäßig, sehr leicht'
+    },
+    {
+      id: 'elitewheels-drive', name: 'Elitewheels Drive 50D', profil: '50mm', felge: '25mm int.',
+      gewicht: 1440, preis: 399,
+      beschreibung: 'Hochwertige Naben, DT Swiss Champion Speichen. Gute Allround-Performance'
+    },
+    {
+      id: 'farsports-88', name: 'FarSports FSC88', profil: '88mm', felge: '25mm int.',
+      gewicht: 1620, preis: 449,
+      beschreibung: 'Tiefes Aero-Profil für Zeitfahren & Flachrennen. Nicht für windige Bergfahrten geeignet'
+    },
+  ],
+  cockpit: [
+    {
+      id: 'china-compact', name: 'Carbon Compact (China)', typ: 'Compact',
+      breite: '420mm', gewicht: 275, preis: 79,
+      beschreibung: 'Kompakter Lenker + Vorbau aus unidirektionalem Carbon. Sehr gutes Preis-Leistungs-Verhältnis'
+    },
+    {
+      id: 'china-aero', name: 'Carbon Aero-Bar (China)', typ: 'Aero Flach',
+      breite: '420mm', gewicht: 258, preis: 119,
+      beschreibung: 'Flacher Aero-Lenker für Race-Position. Kompatibel mit internem Kabelrouting der meisten Rahmen'
+    },
+    {
+      id: 'deda-alanera', name: 'Deda Alanera DC', typ: 'Integral',
+      breite: '420mm', gewicht: 335, preis: 229,
+      beschreibung: 'Integriertes Einteil-Cockpit (Bar + Stem). Sehr saubere Optik, für Di2 & eTap geeignet'
+    },
+    {
+      id: '3t-aero', name: '3T Aeroghiaia Pro', typ: 'Aero',
+      breite: '420mm', gewicht: 318, preis: 189,
+      beschreibung: 'Bewährtes 3T-Qualitätsprodukt. Breite Größenauswahl, sehr verbreitet in der Szene'
+    },
+  ],
+  sattel: [
+    {
+      id: 'china-carbon', name: 'Carbon Sattel (China)', breite: '143mm',
+      gewicht: 145, preis: 49,
+      beschreibung: 'Ultraleicht & günstig. Wenig Polsterung – besser für kurze bis mittlere Touren'
+    },
+    {
+      id: 'fizik-argo', name: 'Fizik Argo Vento R3', breite: '150mm',
+      gewicht: 195, preis: 89,
+      beschreibung: 'Kurzer Highend-Sattel für aggressive Sitzposition. Carbon-Schienen, sehr gut verarbeitet'
+    },
+    {
+      id: 'selle-slr', name: 'Selle Italia SLR Boost Kit', breite: '145mm',
+      gewicht: 175, preis: 109,
+      beschreibung: 'Klassiker im Radsport. Sehr bewährt, Titanschienen-Option, passend für viele Fahrertypen'
+    },
+    {
+      id: 'prologo-dim', name: 'Prologo Dimension NDR', breite: '143mm',
+      gewicht: 212, preis: 79,
+      beschreibung: 'Guter Einstiegssattel für Rennräder. Bequemer als reine Carbon-Sättel, sehr empfehlenswert'
+    },
+  ],
+  pedale: [
+    {
+      id: 'keine', name: 'Ohne Pedale', system: '–',
+      gewicht: 0, preis: 0,
+      beschreibung: 'Pedale separat kaufen oder bereits vorhanden'
+    },
+    {
+      id: 'shi-r550', name: 'Shimano PD-R550', system: 'SPD-SL',
+      gewicht: 328, preis: 35,
+      beschreibung: 'Zuverlässige Einstiegspedale. Aluplattform, leicht genug für Training & Rennen'
+    },
+    {
+      id: 'shi-r8000', name: 'Shimano PD-R8000', system: 'SPD-SL',
+      gewicht: 248, preis: 89,
+      beschreibung: 'Ultegra-Pedale. Breite Plattform, Carbon-Achsstift, spürbar leichter als R550'
+    },
+    {
+      id: 'look-keo', name: 'Look Kéo 2 Max Carbon', system: 'Look Kéo',
+      gewicht: 240, preis: 79,
+      beschreibung: 'Große 400mm² Plattform, Carbon-Achse. Sehr beliebt bei Triathleten & Rennradfahrern'
+    },
+  ],
+};
+
+const KATS = ['rahmen', 'schaltgruppe', 'laufraeder', 'cockpit', 'sattel', 'pedale'];
+const KAT_NAME = { rahmen: 'Rahmen', schaltgruppe: 'Schaltgruppe', laufraeder: 'Laufräder', cockpit: 'Cockpit', sattel: 'Sattel', pedale: 'Pedale' };
+const KAT_ICON = { rahmen: '🏗️', schaltgruppe: '⚙️', laufraeder: '🔵', cockpit: '🎯', sattel: '🪑', pedale: '👟' };
+
+let auswahl = { rahmen: null, schaltgruppe: null, laufraeder: null, cockpit: null, sattel: null, pedale: 'keine' };
+let schaltFilter = 'alle';
+
+function fmt(n) { return '€ ' + n.toLocaleString('de-DE'); }
+function getTeil(kat, id) { return id ? (TEILE[kat].find(t => t.id === id) || null) : null; }
+
+function waehle(kat, id) {
+  auswahl[kat] = id;
+  renderOptionen(kat);
+  renderSummary();
+}
+
+function setFilter(f) {
+  schaltFilter = f;
+  ['alle','shimano','sram'].forEach(k => document.getElementById('f-'+k).classList.toggle('on', f === k));
+  renderOptionen('schaltgruppe');
+}
+
+function renderOptionen(kat) {
+  const container = document.getElementById('opts-' + kat);
+  if (!container) return;
+  let teile = TEILE[kat];
+  if (kat === 'schaltgruppe' && schaltFilter !== 'alle') teile = teile.filter(t => t.marke === schaltFilter);
+
+  container.innerHTML = teile.map(t => {
+    const sel = auswahl[kat] === t.id;
+    const tags = [];
+    if (t.typ)      tags.push({ label: t.typ, cls: 'ac' });
+    if (t.material) tags.push({ label: t.material, cls: '' });
+    if (t.bremse)   tags.push({ label: t.bremse, cls: '' });
+    if (t.gaenge)   tags.push({ label: t.gaenge, cls: '' });
+    if (t.profil)   tags.push({ label: t.profil, cls: 'ac' });
+    if (t.felge)    tags.push({ label: t.felge, cls: '' });
+    if (t.breite)   tags.push({ label: t.breite, cls: '' });
+    if (t.marke === 'shimano') tags.push({ label: 'Shimano', cls: 'gr' });
+    if (t.marke === 'sram')    tags.push({ label: 'SRAM',    cls: 'yl' });
+    if (t.system && t.system !== '–') tags.push({ label: t.system, cls: '' });
+    const gStr = t.gewicht > 0 ? (t.gewicht >= 1000 ? (t.gewicht/1000).toFixed(2).replace('.',',') + ' kg' : t.gewicht + ' g') : null;
+    return `<div class="opt-card${sel ? ' selected' : ''}" onclick="waehle('${kat}','${t.id}')">
+      <div class="check-ico">✓</div>
+      <div class="opt-name">${t.name}</div>
+      ${tags.length ? '<div class="opt-tags">' + tags.map(tg => `<span class="opt-tag ${tg.cls}">${tg.label}</span>`).join('') + '</div>' : ''}
+      ${gStr ? `<div class="opt-spec">Gewicht: <strong>${gStr}</strong></div>` : ''}
+      <div class="opt-desc">${t.beschreibung}</div>
+      ${t.inkl ? `<div class="opt-inkl">Inkl. ${t.inkl}</div>` : ''}
+      <div class="opt-price">${t.preis > 0 ? fmt(t.preis) : 'ohne Aufpreis'}</div>
+    </div>`;
+  }).join('');
+
+  const stepEl = document.getElementById('step-' + kat);
+  const badgeEl = document.getElementById('badge-' + kat);
+  if (stepEl)  stepEl.className = 'step-num' + (auswahl[kat] ? ' done' : '');
+  if (badgeEl) { const s = getTeil(kat, auswahl[kat]); badgeEl.textContent = s ? s.name : ''; badgeEl.style.display = s ? 'inline' : 'none'; }
+}
+
+function renderSummary() {
+  let tp = 0, tg = 0;
+  KATS.forEach(kat => { const t = getTeil(kat, auswahl[kat]); if (t) { tp += t.preis; tg += t.gewicht; } });
+  const ps = fmt(tp);
+  const gs = tg > 0 ? (tg/1000).toFixed(1).replace('.',',') + ' kg' : '– kg';
+  document.getElementById('sum-price').textContent = ps;
+  document.getElementById('sum-weight').textContent = gs;
+  document.getElementById('mb-price').textContent = ps;
+  document.getElementById('mb-weight').textContent = 'Gewicht: ' + gs;
+
+  document.getElementById('comp-list').innerHTML = KATS.map(kat => {
+    const t = getTeil(kat, auswahl[kat]);
+    return `<div class="comp-item"><div><span class="comp-kat">${KAT_NAME[kat]}</span><span class="${t ? 'comp-name' : 'comp-missing'}">${t ? t.name : 'Nicht gewählt'}</span></div>${t && t.preis > 0 ? '<span class="comp-price">' + fmt(t.preis) + '</span>' : ''}</div>`;
+  }).join('');
+
+  const hints = [];
+  const sg = getTeil('schaltgruppe', auswahl.schaltgruppe);
+  const lr = getTeil('laufraeder', auswahl.laufraeder);
+  const rh = getTeil('rahmen', auswahl.rahmen);
+  if (sg) {
+    if (sg.marke === 'sram') hints.push({ ico: '⚠️', text: 'SRAM eTap AXS benötigt XDR-Freilaufkörper beim Laufradkauf (nicht HG-kompatibel)' });
+    else if (sg.id !== 'shi-105-mech') hints.push({ ico: 'ℹ️', text: 'Shimano 12-speed Di2: Laufräder mit Micro Spline-Freilaufkörper bestellen' });
+    if (sg.typ !== 'Mechanisch' && rh) hints.push({ ico: '✅', text: rh.name + ' unterstützt vollständiges internes Kabelrouting für ' + sg.name });
+  }
+  if (lr && lr.id === 'farsports-88') hints.push({ ico: '⚠️', text: '88mm-Profil: Stark windsensibel. Nur für windstille Bedingungen & Flachrennen empfohlen' });
+  if (lr && lr.id === 'lightcarbon-r50') hints.push({ ico: 'ℹ️', text: 'Hookless-Felge: Nur Reifen mit Tubeless-Kompatibilität, max. 5 bar Luftdruck' });
+  const fehlend = KATS.filter(k => !auswahl[k]).length;
+  hints.push(fehlend > 0
+    ? { ico: '💡', text: `Noch ${fehlend} Kategorie${fehlend > 1 ? 'n' : ''} nicht konfiguriert` }
+    : { ico: '🎉', text: 'Konfiguration vollständig! Viel Spaß mit deinem neuen Traumrad.' });
+
+  document.getElementById('compat-box').innerHTML = hints
+    .map(h => `<div class="compat-item"><span class="compat-ico">${h.ico}</span><span>${h.text}</span></div>`).join('');
+}
+
+function buildLayout() {
+  document.getElementById('config-col').innerHTML = KATS.map((kat, i) => `
+    <div class="section-card">
+      <div class="section-head">
+        <div class="step-num" id="step-${kat}">${i+1}</div>
+        <h2>${KAT_ICON[kat]} ${KAT_NAME[kat]}</h2>
+        <span class="sel-badge" id="badge-${kat}" style="display:none"></span>
+      </div>
+      ${kat === 'schaltgruppe' ? '<div class="filter-row"><button class="fbtn on" id="f-alle" onclick="setFilter(\'alle\')">Alle</button><button class="fbtn" id="f-shimano" onclick="setFilter(\'shimano\')">Shimano</button><button class="fbtn" id="f-sram" onclick="setFilter(\'sram\')">SRAM</button></div>' : ''}
+      <div class="options-grid" id="opts-${kat}"></div>
+    </div>`).join('');
+  KATS.forEach(kat => renderOptionen(kat));
+  renderSummary();
+}
+
+function kopieren() {
+  const z = KATS.map(kat => { const t = getTeil(kat, auswahl[kat]); return KAT_NAME[kat] + ': ' + (t ? t.name + ' (' + fmt(t.preis) + ')' : '–'); });
+  const tot = KATS.reduce((s, k) => s + (getTeil(k, auswahl[k])?.preis || 0), 0);
+  z.push('', 'Gesamt: ' + fmt(tot));
+  navigator.clipboard.writeText(z.join('\n')).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Kopiert!';
+    setTimeout(() => btn.textContent = 'Konfiguration kopieren', 2000);
+  });
+}
+
+buildLayout();
+</script>
+</body>
+</html>
