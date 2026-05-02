@@ -208,184 +208,84 @@
 </header>
 
 <div class="container">
-
   <div class="col">
-
     <div class="card">
       <div class="card-head"><div class="ico">🏢</div><h2>Wohnung &amp; Objekt</h2></div>
       <div class="card-body">
-
         <div class="section">
           <div class="sec-title">Lage &amp; Kaufpreis</div>
-
-          <div class="field">
-            <label>Region</label>
-            <select id="region">
-              <option value="hannover">Hannover</option>
-              <option value="hildesheim">Hildesheim</option>
-              <option value="goettingen">Göttingen</option>
-              <option value="manuell">Manuell eingeben</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Kaufpreis</label>
-            <div class="iw"><input type="number" id="kaufpreis" value="200000" min="50000" max="999000" step="1000"><span class="unit">€</span></div>
-          </div>
-
-          <div class="field">
-            <label>Wohnfläche</label>
-            <div class="iw"><input type="number" id="qm" value="65" min="20" max="300" step="1"><span class="unit">m²</span></div>
-          </div>
-
-          <div class="field">
-            <label>Baujahr / AfA-Typ</label>
-            <select id="afa_typ">
-              <option value="0.02">Altbau / vor 2023 → 2 % AfA</option>
-              <option value="0.03">Neubau ab 2023 → 3 % AfA</option>
-            </select>
-          </div>
-
+          <div class="field"><label>Region</label><select id="region"><option value="hannover">Hannover</option><option value="hildesheim">Hildesheim</option><option value="goettingen">Göttingen</option><option value="manuell">Manuell eingeben</option></select></div>
+          <div class="field"><label>Kaufpreis</label><div class="iw"><input type="number" id="kaufpreis" value="200000" min="50000" max="999000" step="1000"><span class="unit">€</span></div></div>
+          <div class="field"><label>Wohnfläche</label><div class="iw"><input type="number" id="qm" value="65" min="20" max="300" step="1"><span class="unit">m²</span></div></div>
+          <div class="field"><label>Baujahr / AfA-Typ</label><select id="afa_typ"><option value="0.02">Altbau / vor 2023 → 2 % AfA</option><option value="0.03">Neubau ab 2023 → 3 % AfA</option></select></div>
           <div class="field">
             <label>Gebäudeanteil am Kaufpreis (für AfA-Berechnung)</label>
-            <div class="range-row">
-              <input type="range" id="gbanteil" min="50" max="90" value="70" step="5"
-                oninput="document.getElementById('gbanteil_v').textContent=this.value+'%'">
-              <span class="rval" id="gbanteil_v">70%</span>
-            </div>
+            <div class="range-row"><input type="range" id="gbanteil" min="50" max="90" value="70" step="5" oninput="document.getElementById('gbanteil_v').textContent=this.value+'%'"><span class="rval" id="gbanteil_v">70%</span></div>
             <div class="hint">Typisch 70–80 % für städtische Eigentumswohnungen (Rest = Grundanteil, nicht abschreibbar)</div>
           </div>
         </div>
-
         <div class="section">
           <div class="sec-title">Nebenkosten beim Kauf</div>
-
-          <div class="field">
-            <label>Maklerprovision</label>
-            <div class="toggle-row">
-              <button class="tbtn" id="btn_prov_nein" onclick="setProvision(false)">Ohne Provision</button>
-              <button class="tbtn on" id="btn_prov_ja" onclick="setProvision(true)">Mit Provision</button>
-            </div>
-          </div>
-          <div id="prov_feld" class="field">
-            <label>Käuferanteil Maklerprovision</label>
-            <div class="iw"><input type="number" id="provision" value="3.57" min="0" max="7" step="0.01"><span class="unit">%</span></div>
-            <div class="hint">Üblich: 3,57 % inkl. MwSt. (Gesamtprovision meist 7,14 %, je 50/50 geteilt)</div>
-          </div>
+          <div class="field"><label>Maklerprovision</label><div class="toggle-row"><button class="tbtn" id="btn_prov_nein" onclick="setProvision(false)">Ohne Provision</button><button class="tbtn on" id="btn_prov_ja" onclick="setProvision(true)">Mit Provision</button></div></div>
+          <div id="prov_feld" class="field"><label>Käuferanteil Maklerprovision</label><div class="iw"><input type="number" id="provision" value="3.57" min="0" max="7" step="0.01"><span class="unit">%</span></div><div class="hint">Üblich: 3,57 % inkl. MwSt. (Gesamtprovision meist 7,14 %, je 50/50 geteilt)</div></div>
         </div>
-
         <div class="section">
           <div class="sec-title">Laufende Kosten</div>
-
-          <div class="field">
-            <label>Hausgeld (monatlich, an WEG)</label>
-            <div class="iw"><input type="number" id="hausgeld" value="200" min="0" max="1000" step="10"><span class="unit">€/Monat</span></div>
-            <div class="hint">Inkl. Instandhaltungsrücklage – vollständig als Werbungskosten absetzbar</div>
-          </div>
+          <div class="field"><label>Hausgeld (monatlich, an WEG)</label><div class="iw"><input type="number" id="hausgeld" value="200" min="0" max="1000" step="10"><span class="unit">€/Monat</span></div><div class="hint">Inkl. Instandhaltungsrücklage – vollständig als Werbungskosten absetzbar</div></div>
         </div>
-
         <div class="section">
           <div class="sec-title">Mieteinnahmen</div>
-
-          <div class="field">
-            <label>Kaltmiete pro m²</label>
-            <div class="iw"><input type="number" id="miete_qm" value="10.50" min="4" max="30" step="0.10"><span class="unit">€/m²</span></div>
-            <div id="miete_hint" class="hint">Hannover: ca. 10–12 €/m² (Marktschätzung 2025)</div>
-          </div>
-
+          <div class="field"><label>Kaltmiete pro m²</label><div class="iw"><input type="number" id="miete_qm" value="10.50" min="4" max="30" step="0.10"><span class="unit">€/m²</span></div><div id="miete_hint" class="hint">Hannover: ca. 10–12 €/m² (Marktschätzung 2025)</div></div>
           <div class="field">
             <label>Leerstandspuffer</label>
-            <div class="range-row">
-              <input type="range" id="leerstand" min="0" max="10" value="3" step="1"
-                oninput="document.getElementById('leerstand_v').textContent=this.value+'%'">
-              <span class="rval" id="leerstand_v">3%</span>
-            </div>
+            <div class="range-row"><input type="range" id="leerstand" min="0" max="10" value="3" step="1" oninput="document.getElementById('leerstand_v').textContent=this.value+'%'"><span class="rval" id="leerstand_v">3%</span></div>
             <div class="hint">Ca. 3–4 Wochen Leerstand/Jahr als Sicherheitspuffer</div>
           </div>
         </div>
-
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">💳</div><h2>Finanzierung</h2></div>
       <div class="card-body">
-
-        <div class="field">
-          <label>Eigenkapital gesamt</label>
-          <div class="iw"><input type="number" id="ek" value="20000" min="0" max="500000" step="1000"><span class="unit">€</span></div>
-          <div class="hint">Je €10.000 von dir und deiner Freundin</div>
-        </div>
-
+        <div class="field"><label>Eigenkapital gesamt</label><div class="iw"><input type="number" id="ek" value="20000" min="0" max="500000" step="1000"><span class="unit">€</span></div><div class="hint">Je €10.000 von dir und deiner Freundin</div></div>
         <div class="field">
           <label>Sollzinssatz (p.a.)</label>
-          <div class="range-row">
-            <input type="range" id="zins" min="1.0" max="7.0" value="3.5" step="0.1"
-              oninput="document.getElementById('zins_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'">
-            <span class="rval" id="zins_v">3,5 %</span>
-          </div>
+          <div class="range-row"><input type="range" id="zins" min="1.0" max="7.0" value="3.5" step="0.1" oninput="document.getElementById('zins_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'"><span class="rval" id="zins_v">3,5 %</span></div>
           <div class="hint">Aktuelle 10-Jahres-Zinsbindung: ca. 3,3–4,0 % (Stand 2025)</div>
         </div>
-
         <div class="field">
           <label>Anfangstilgung (p.a.)</label>
-          <div class="range-row">
-            <input type="range" id="tilgung" min="1.0" max="5.0" value="2.0" step="0.5"
-              oninput="document.getElementById('tilgung_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'">
-            <span class="rval" id="tilgung_v">2,0 %</span>
-          </div>
+          <div class="range-row"><input type="range" id="tilgung" min="1.0" max="5.0" value="2.0" step="0.5" oninput="document.getElementById('tilgung_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'"><span class="rval" id="tilgung_v">2,0 %</span></div>
           <div class="hint">1–2 % = typischer Einstieg für Kapitalanleger (Mieter tilgt mit)</div>
         </div>
-
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">📊</div><h2>Steuer &amp; Eigentümer</h2></div>
       <div class="card-body">
-
         <div class="field">
           <label>Eigentumsaufteilung (beide unverheiratet)</label>
-          <div class="range-row">
-            <span style="font-size:12px;color:var(--text2);white-space:nowrap">P1</span>
-            <input type="range" id="anteil" min="0" max="100" value="50" step="10"
-              oninput="document.getElementById('anteil_v').textContent=this.value+'% / '+(100-parseInt(this.value))+'%'">
-            <span style="font-size:12px;color:var(--text2);white-space:nowrap">P2</span>
-            <span class="rval" id="anteil_v" style="min-width:75px">50% / 50%</span>
-          </div>
+          <div class="range-row"><span style="font-size:12px;color:var(--text2);white-space:nowrap">P1</span><input type="range" id="anteil" min="0" max="100" value="50" step="10" oninput="document.getElementById('anteil_v').textContent=this.value+'% / '+(100-parseInt(this.value))+'%'"><span style="font-size:12px;color:var(--text2);white-space:nowrap">P2</span><span class="rval" id="anteil_v" style="min-width:75px">50% / 50%</span></div>
           <div class="hint">Jeder deklariert seinen Anteil separat in seiner Steuererklärung</div>
         </div>
-
         <div class="pblock">
           <h4>Partner 1 – Du (Angestellter)</h4>
-          <div class="field">
-            <label>Jahresbruttoeinkommen</label>
-            <div class="iw"><input type="number" id="ein_p1" value="100000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div>
-          </div>
+          <div class="field"><label>Jahresbruttoeinkommen</label><div class="iw"><input type="number" id="ein_p1" value="100000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div></div>
         </div>
-
         <div class="pblock">
           <h4>Partner 2 – Freundin (Polizistin / Beamtin)</h4>
-          <div class="field">
-            <label>Jahresbruttoeinkommen</label>
-            <div class="iw"><input type="number" id="ein_p2" value="44000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div>
-            <div class="hint">Schätzung: €2.800 netto/Monat als Beamtin ≈ €44.000 brutto/Jahr</div>
-          </div>
+          <div class="field"><label>Jahresbruttoeinkommen</label><div class="iw"><input type="number" id="ein_p2" value="44000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div><div class="hint">Schätzung: €2.800 netto/Monat als Beamtin ≈ €44.000 brutto/Jahr</div></div>
         </div>
-
       </div>
     </div>
-
   </div>
 
   <div class="col">
-
     <div id="cf_banner" class="cf-banner green">
       <div class="cf-label">Monatlicher Netto-Cashflow</div>
       <div class="cf-amount" id="cf_amount">+€ 0</div>
       <div class="cf-desc" id="cf_desc">Wird berechnet…</div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">📌</div><h2>Kennzahlen auf einen Blick</h2></div>
       <div class="card-body">
@@ -397,7 +297,6 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">📈</div><h2>Monatliche Cashflow-Aufschlüsselung</h2></div>
       <div class="card-body">
@@ -407,12 +306,9 @@
         <div class="bline" id="b_steuer_p1_row"><span>+ Steuerersparnis Partner 1 (mtl. Äquivalent)</span><span class="v" id="b_steuer_p1">–</span></div>
         <div class="bline" id="b_steuer_p2_row"><span>+ Steuerersparnis Partner 2 (mtl. Äquivalent)</span><span class="v" id="b_steuer_p2">–</span></div>
         <div class="bsum"><span>= Netto-Cashflow / Monat</span><span id="b_sum">–</span></div>
-        <div class="note-box">
-          <strong>Zur Steuerersparnis:</strong> Sie entsteht, weil AfA + Schuldzinsen + Hausgeld die Mieteinnahmen als Werbungskosten übersteigen. Der steuerliche Verlust wird mit eurem regulären Einkommen verrechnet → Steuerrückerstattung im Folgejahr (oder monatlich via Freibetragsantrag beim Finanzamt).
-        </div>
+        <div class="note-box"><strong>Zur Steuerersparnis:</strong> Sie entsteht, weil AfA + Schuldzinsen + Hausgeld die Mieteinnahmen als Werbungskosten übersteigen. Der steuerliche Verlust wird mit eurem regulären Einkommen verrechnet → Steuerrückerstattung im Folgejahr (oder monatlich via Freibetragsantrag beim Finanzamt).</div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">🔑</div><h2>Gesamtinvestition &amp; Finanzierung</h2></div>
       <div class="card-body">
@@ -430,7 +326,6 @@
         <div class="rrow"><span class="rlabel">→ davon Tilgung (Monat 1)</span><span class="rval2 g" id="r_tilg_m">–</span></div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">💡</div><h2>Steuerliche Analyse (§ 21 EStG)</h2></div>
       <div class="card-body">
@@ -438,10 +333,7 @@
         <div class="rrow"><span class="rlabel">AfA (Absetzung f. Abnutzung) jährlich</span><span class="rval2" id="r_afa">–</span></div>
         <div class="rrow"><span class="rlabel">Schuldzinsen (Werbungskosten, Jahr 1)</span><span class="rval2" id="r_zinsen_j">–</span></div>
         <div class="rrow"><span class="rlabel">Hausgeld (Werbungskosten) jährlich</span><span class="rval2" id="r_hg_j">–</span></div>
-        <div class="rrow strong-row">
-          <span class="rlabel"><strong>Steuerliches Ergebnis</strong></span>
-          <span class="rval2" id="r_ergebnis">–</span>
-        </div>
+        <div class="rrow strong-row"><span class="rlabel"><strong>Steuerliches Ergebnis</strong></span><span class="rval2" id="r_ergebnis">–</span></div>
         <div class="divider"></div>
         <div class="pblock">
           <h4>Partner 1</h4>
@@ -457,7 +349,6 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-head"><div class="ico">🗓️</div><h2>10-Jahres-Überblick (Annäherung)</h2></div>
       <div class="card-body">
@@ -466,17 +357,14 @@
         <div class="rrow"><span class="rlabel">Gesamte Steuerersparnis (10 J.)</span><span class="rval2 g" id="r_steuer10">–</span></div>
         <div class="rrow"><span class="rlabel">Kumulativer Cashflow (10 J.)</span><span class="rval2" id="r_cf10">–</span></div>
         <div class="rrow"><span class="rlabel">Summe selbst gezahlte Raten (10 J.)</span><span class="rval2" id="r_eigen10">–</span></div>
-        <div class="note-box">
-          <strong>Hinweis:</strong> Wertsteigerung der Wohnung ist nicht eingerechnet. Historisch: 2–3 % p.a. in Hannover wäre bei €200.000 in 10 Jahren ca. +€44.000–66.000 zusätzliches Vermögen.
-        </div>
+        <div class="note-box"><strong>Hinweis:</strong> Wertsteigerung der Wohnung ist nicht eingerechnet. Historisch: 2–3 % p.a. in Hannover wäre bei €200.000 in 10 Jahren ca. +€44.000–66.000 zusätzliches Vermögen.</div>
       </div>
     </div>
-
   </div>
 </div>
 
 <footer>
-  Alle Angaben ohne Gewähr · Grunderwerbsteuer Niedersachsen: 5 % · AfA nach § 7 EStG · Steuertarif 2025 (Grundtarif) ·
+  Alle Angaben ohne Gewähr · Grunderwerbsteuer Niedersachsen: 5 % · AfA nach § 7 EStG · Steuertarif 2024 (Grundtarif) ·
   Keine Steuerberatung – bitte Steuerberater hinzuziehen · Stand Mai 2025
 </footer>
 
@@ -555,12 +443,12 @@
     const einP2      = v('ein_p2');
     const provPct    = mitProvision ? v('provision') / 100 : 0;
 
-    const gst     = kaufpreis * 0.05;
-    const notar   = kaufpreis * 0.015;
-    const grndB   = kaufpreis * 0.005;
-    const prov    = kaufpreis * provPct;
-    const nk      = gst + notar + grndB + prov;
-    const darl    = Math.max(0, kaufpreis + nk - eigenkapit);
+    const gst    = kaufpreis * 0.05;
+    const notar  = kaufpreis * 0.015;
+    const grndB  = kaufpreis * 0.005;
+    const prov   = kaufpreis * provPct;
+    const nk     = gst + notar + grndB + prov;
+    const darl   = Math.max(0, kaufpreis + nk - eigenkapit);
 
     const i_m      = zins / 12;
     const rate     = darl * (zins + tilgung) / 12;
@@ -603,7 +491,7 @@
 
     const bruttoRendite = kaufpreis > 0 ? (miete_brutto * 12) / kaufpreis * 100 : 0;
     const nettoRendite  = (kaufpreis + nk) > 0 ? (miete_jahr - hgJahr) / (kaufpreis + nk) * 100 : 0;
-    const kaufFaktor    = miete_jahr > 0 ? kaufpreis / miete_jahr : 0;
+    const kaufFaktor    = miete_brutto > 0 ? kaufpreis / (miete_brutto * 12) : 0;
 
     const banner = el('cf_banner');
     banner.className = 'cf-banner ' + (cf >= 0 ? 'green' : cf >= -200 ? 'yellow' : 'red');
