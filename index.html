@@ -1,17 +1,175 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/byu-plan/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>byu-plan</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="/byu-plan/assets/supabase-sync.js"></script>
-    <script src="/byu-plan/assets/strava.js"></script>
-    <script type="module" crossorigin src="/byu-plan/assets/index-BHAndH2w.js"></script>
-    <link rel="stylesheet" crossorigin href="/byu-plan/assets/index-nqMpL4T3.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard · byu-plan</title>
+  <link rel="icon" type="image/svg+xml" href="/byu-plan/favicon.svg" />
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --surface: #1a1a24;
+      --surface2: #22222e;
+      --border: #2e2e3d;
+      --text: #e8e8f0;
+      --text2: #9090a8;
+      --accent: #6c8dfa;
+      --accent2: #a78bfa;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    .hero {
+      padding: 52px 24px 0;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .hero .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #e8e8f0 40%, #6c8dfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--text2);
+      font-size: 15px;
+      margin-top: 10px;
+    }
+
+    .grid {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--text2);
+      margin: 40px 0 14px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .2s, transform .15s, box-shadow .2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 36px rgba(108,141,250,.13);
+    }
+    .card:active { transform: translateY(0); }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .icon-blue   { background: rgba(108,141,250,.15); }
+    .icon-purple { background: rgba(167,139,250,.15); }
+
+    .card-name { font-size: 16px; font-weight: 700; }
+    .card-desc {
+      font-size: 13px; color: var(--text2);
+      line-height: 1.55; flex: 1;
+    }
+    .card-foot {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .tag {
+      font-size: 11px; padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--surface2); color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .arrow {
+      font-size: 16px; color: var(--accent);
+      transition: transform .15s;
+    }
+    .card:hover .arrow { transform: translateX(5px); }
+
+    footer {
+      text-align: center; padding: 22px;
+      color: var(--text2); font-size: 11px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 28px; }
+      .hero { padding-top: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">byu-plan</div>
+  <h1>Dashboard</h1>
+  <p>Alle Tools auf einen Blick</p>
+</div>
+
+<div class="grid">
+  <div class="section-label">Apps</div>
+  <div class="app-grid">
+
+    <a class="card" href="trainingsplan.html">
+      <div class="card-icon icon-blue">🏃</div>
+      <div class="card-name">Trainingsplan</div>
+      <div class="card-desc">Lauftraining planen &amp; tracken. Verbunden mit Strava für automatische Aktivitätssynchronisation.</div>
+      <div class="card-foot">
+        <span class="tag">Sport</span>
+        <span class="arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="mietkalkulator.html">
+      <div class="card-icon icon-purple">🏠</div>
+      <div class="card-name">Immobilien-Rechner</div>
+      <div class="card-desc">Cashflow- &amp; Steueranalyse für Kaufimmobilien zur Vermietung in der Region Hannover / Hildesheim / Göttingen.</div>
+      <div class="card-foot">
+        <span class="tag">Finanzen</span>
+        <span class="arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<footer>byu-plan · fzudemx.github.io</footer>
+
+</body>
 </html>
