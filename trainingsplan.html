@@ -10,8 +10,28 @@
     <script src="/byu-plan/assets/strava.js"></script>
     <script type="module" crossorigin src="/byu-plan/assets/index-BHAndH2w.js"></script>
     <link rel="stylesheet" crossorigin href="/byu-plan/assets/index-nqMpL4T3.css">
+    <style>
+      .back-btn {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 9999;
+        background: rgba(15,15,20,.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid #2e2e3d;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 12px;
+        color: #9090a8;
+        text-decoration: none;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        transition: color .15s, border-color .15s;
+      }
+      .back-btn:hover { color: #6c8dfa; border-color: #6c8dfa; }
+    </style>
   </head>
   <body>
+    <a class="back-btn" href="/byu-plan/">← Dashboard</a>
     <div id="root"></div>
   </body>
 </html>
