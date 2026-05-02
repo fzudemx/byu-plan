@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Immobilien-Renditerechner · Hannover / Hildesheim / Göttingen</title>
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --surface: #1a1a24;
+      --surface2: #22222e;
+      --border: #2e2e3d;
+      --text: #e8e8f0;
+      --text2: #9090a8;
+      --accent: #6c8dfa;
+      --accent2: #a78bfa;
+      --green: #4ade80;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 32px;
+    }
+    header h1 { font-size: 21px; font-weight: 700; margin-bottom: 3px; }
+    header p { color: var(--text2); font-size: 13px; }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
+
+    .col { display: flex; flex-direction: column; gap: 16px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 13px 18px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-head .ico {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: var(--accent); display: flex;
+      align-items: center; justify-content: center; font-size: 13px;
+      flex-shrink: 0;
+    }
+    .card-head h2 {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--text);
+    }
+    .card-body { padding: 18px; }
+
+    .sec-title {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin: 0 0 10px;
+      padding-bottom: 5px; border-bottom: 1px solid var(--border);
+    }
+    .section { margin-bottom: 18px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+    .field .hint { font-size: 11px; color: var(--text2); margin-top: 3px; font-style: italic; }
+
+    .iw { position: relative; }
+    .iw input { padding-right: 50px; }
+    .iw .unit {
+      position: absolute; right: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px; color: var(--text2); pointer-events: none;
+    }
+
+    input[type="number"], input[type="text"], select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 7px 11px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .15s;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    .range-row { display: flex; align-items: center; gap: 10px; }
+    .range-row input[type="range"] { flex: 1; accent-color: var(--accent); padding: 0; }
+    .rval { min-width: 55px; text-align: right; font-size: 13px; font-weight: 600; color: var(--text); }
+
+    .toggle-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .tbtn {
+      padding: 5px 14px; border-radius: 20px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); font-size: 12px; cursor: pointer;
+      font-family: inherit; transition: all .15s;
+    }
+    .tbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .pblock {
+      background: var(--surface2); border-radius: 10px;
+      padding: 13px 15px; margin-bottom: 10px;
+    }
+    .pblock h4 {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--accent2); margin-bottom: 9px;
+    }
+
+    /* ── Results ── */
+    .cf-banner {
+      border-radius: var(--radius); padding: 20px;
+    }
+    .cf-banner.green { background: rgba(74,222,128,.10); border: 1px solid rgba(74,222,128,.30); }
+    .cf-banner.yellow { background: rgba(251,191,36,.10); border: 1px solid rgba(251,191,36,.30); }
+    .cf-banner.red { background: rgba(248,113,113,.10); border: 1px solid rgba(248,113,113,.30); }
+    .cf-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+    .cf-banner.green .cf-label { color: var(--green); }
+    .cf-banner.yellow .cf-label { color: var(--yellow); }
+    .cf-banner.red .cf-label { color: var(--red); }
+    .cf-amount { font-size: 36px; font-weight: 800; margin-bottom: 5px; line-height: 1; }
+    .cf-banner.green .cf-amount { color: var(--green); }
+    .cf-banner.yellow .cf-amount { color: var(--yellow); }
+    .cf-banner.red .cf-amount { color: var(--red); }
+    .cf-desc { font-size: 13px; color: var(--text2); }
+
+    .rrow {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+    }
+    .rrow:last-child { border-bottom: none; }
+    .rlabel { font-size: 13px; color: var(--text2); }
+    .rval2 { font-size: 13px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+    .rval2.g { color: var(--green); }
+    .rval2.r { color: var(--red); }
+    .rval2.a { color: var(--accent); }
+    .rval2.y { color: var(--yellow); }
+
+    .bline {
+      display: flex; justify-content: space-between;
+      font-size: 13px; padding: 5px 0; color: var(--text2);
+    }
+    .bline .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .bline.pos .v { color: var(--green); }
+    .bline.neg .v { color: var(--red); }
+    .bline.neu .v { color: var(--text2); }
+    .bsum {
+      display: flex; justify-content: space-between;
+      font-size: 15px; font-weight: 700; padding: 10px 0 4px;
+      margin-top: 4px; border-top: 2px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+    .strong-row {
+      border-top: 2px solid var(--border) !important;
+      padding-top: 10px !important; margin-top: 3px;
+    }
+
+    .note-box {
+      background: var(--surface2); border-radius: 8px;
+      padding: 10px 13px; font-size: 12px; color: var(--text2);
+      margin-top: 10px; line-height: 1.5;
+    }
+    .note-box strong { color: var(--text); }
+
+    .yield-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .pill {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 14px; text-align: center; flex: 1; min-width: 100px;
+    }
+    .pill .ptitle { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; }
+    .pill .pval { font-size: 18px; font-weight: 700; color: var(--accent); margin-top: 2px; }
+
+    footer {
+      text-align: center; padding: 18px;
+      color: var(--text2); font-size: 11px;
+      border-top: 1px solid var(--border); margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏠 Immobilien-Renditerechner</h1>
+  <p>Cashflow- &amp; Steueranalyse für Kaufimmobilien zur Vermietung · Region Hannover / Hildesheim / Göttingen · Stand 2025/2026</p>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════ LINKE SPALTE: EINGABEN ═══════════════ -->
+  <div class="col">
+
+    <!-- WOHNUNG -->
+    <div class="card">
+      <div class="card-head"><div class="ico">🏢</div><h2>Wohnung &amp; Objekt</h2></div>
+      <div class="card-body">
+
+        <div class="section">
+          <div class="sec-title">Lage &amp; Kaufpreis</div>
+
+          <div class="field">
+            <label>Region</label>
+            <select id="region">
+              <option value="hannover">Hannover</option>
+              <option value="hildesheim">Hildesheim</option>
+              <option value="goettingen">Göttingen</option>
+              <option value="manuell">Manuell eingeben</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Kaufpreis</label>
+            <div class="iw"><input type="number" id="kaufpreis" value="200000" min="50000" max="999000" step="1000"><span class="unit">€</span></div>
+          </div>
+
+          <div class="field">
+            <label>Wohnfläche</label>
+            <div class="iw"><input type="number" id="qm" value="65" min="20" max="300" step="1"><span class="unit">m²</span></div>
+          </div>
+
+          <div class="field">
+            <label>Baujahr / AfA-Typ</label>
+            <select id="afa_typ">
+              <option value="0.02">Altbau / vor 2023 → 2 % AfA</option>
+              <option value="0.03">Neubau ab 2023 → 3 % AfA</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Gebäudeanteil am Kaufpreis (für AfA-Berechnung)</label>
+            <div class="range-row">
+              <input type="range" id="gbanteil" min="50" max="90" value="70" step="5"
+                oninput="document.getElementById('gbanteil_v').textContent=this.value+'%'">
+              <span class="rval" id="gbanteil_v">70%</span>
+            </div>
+            <div class="hint">Typisch 70–80 % für städtische Eigentumswohnungen (Rest = Grundanteil, nicht abschreibbar)</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sec-title">Nebenkosten beim Kauf</div>
+
+          <div class="field">
+            <label>Maklerprovision</label>
+            <div class="toggle-row">
+              <button class="tbtn" id="btn_prov_nein" onclick="setProvision(false)">Ohne Provision</button>
+              <button class="tbtn on" id="btn_prov_ja" onclick="setProvision(true)">Mit Provision</button>
+            </div>
+          </div>
+          <div id="prov_feld" class="field">
+            <label>Käuferanteil Maklerprovision</label>
+            <div class="iw"><input type="number" id="provision" value="3.57" min="0" max="7" step="0.01"><span class="unit">%</span></div>
+            <div class="hint">Üblich: 3,57 % inkl. MwSt. (Gesamtprovision meist 7,14 %, je 50/50 geteilt)</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sec-title">Laufende Kosten</div>
+
+          <div class="field">
+            <label>Hausgeld (monatlich, an WEG)</label>
+            <div class="iw"><input type="number" id="hausgeld" value="200" min="0" max="1000" step="10"><span class="unit">€/Monat</span></div>
+            <div class="hint">Inkl. Instandhaltungsrücklage – vollständig als Werbungskosten absetzbar</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sec-title">Mieteinnahmen</div>
+
+          <div class="field">
+            <label>Kaltmiete pro m²</label>
+            <div class="iw"><input type="number" id="miete_qm" value="10.50" min="4" max="30" step="0.10"><span class="unit">€/m²</span></div>
+            <div id="miete_hint" class="hint">Hannover: ca. 10–12 €/m² (Marktschätzung 2025)</div>
+          </div>
+
+          <div class="field">
+            <label>Leerstandspuffer</label>
+            <div class="range-row">
+              <input type="range" id="leerstand" min="0" max="10" value="3" step="1"
+                oninput="document.getElementById('leerstand_v').textContent=this.value+'%'">
+              <span class="rval" id="leerstand_v">3%</span>
+            </div>
+            <div class="hint">Ca. 3–4 Wochen Leerstand/Jahr als Sicherheitspuffer</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FINANZIERUNG -->
+    <div class="card">
+      <div class="card-head"><div class="ico">💳</div><h2>Finanzierung</h2></div>
+      <div class="card-body">
+
+        <div class="field">
+          <label>Eigenkapital gesamt</label>
+          <div class="iw"><input type="number" id="ek" value="20000" min="0" max="500000" step="1000"><span class="unit">€</span></div>
+          <div class="hint">Je €10.000 von dir und deiner Freundin</div>
+        </div>
+
+        <div class="field">
+          <label>Sollzinssatz (p.a.)</label>
+          <div class="range-row">
+            <input type="range" id="zins" min="1.0" max="7.0" value="3.5" step="0.1"
+              oninput="document.getElementById('zins_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'">
+            <span class="rval" id="zins_v">3,5 %</span>
+          </div>
+          <div class="hint">Aktuelle 10-Jahres-Zinsbindung: ca. 3,3–4,0 % (Stand 2025)</div>
+        </div>
+
+        <div class="field">
+          <label>Anfangstilgung (p.a.)</label>
+          <div class="range-row">
+            <input type="range" id="tilgung" min="1.0" max="5.0" value="2.0" step="0.5"
+              oninput="document.getElementById('tilgung_v').textContent=parseFloat(this.value).toFixed(1).replace('.',',')+' %'">
+            <span class="rval" id="tilgung_v">2,0 %</span>
+          </div>
+          <div class="hint">1–2 % = typischer Einstieg für Kapitalanleger (Mieter tilgt mit)</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEUER & EIGENTÜMER -->
+    <div class="card">
+      <div class="card-head"><div class="ico">📊</div><h2>Steuer &amp; Eigentümer</h2></div>
+      <div class="card-body">
+
+        <div class="field">
+          <label>Eigentumsaufteilung (beide unverheiratet)</label>
+          <div class="range-row">
+            <span style="font-size:12px;color:var(--text2);white-space:nowrap">P1</span>
+            <input type="range" id="anteil" min="0" max="100" value="50" step="10"
+              oninput="document.getElementById('anteil_v').textContent=this.value+'% / '+(100-parseInt(this.value))+'%'">
+            <span style="font-size:12px;color:var(--text2);white-space:nowrap">P2</span>
+            <span class="rval" id="anteil_v" style="min-width:75px">50% / 50%</span>
+          </div>
+          <div class="hint">Jeder deklariert seinen Anteil separat in seiner Steuererklärung</div>
+        </div>
+
+        <div class="pblock">
+          <h4>Partner 1 – Du (Angestellter)</h4>
+          <div class="field">
+            <label>Jahresbruttoeinkommen</label>
+            <div class="iw"><input type="number" id="ein_p1" value="100000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div>
+          </div>
+        </div>
+
+        <div class="pblock">
+          <h4>Partner 2 – Freundin (Polizistin / Beamtin)</h4>
+          <div class="field">
+            <label>Jahresbruttoeinkommen</label>
+            <div class="iw"><input type="number" id="ein_p2" value="44000" min="0" max="500000" step="1000"><span class="unit">€/Jahr</span></div>
+            <div class="hint">Schätzung: €2.800 netto/Monat als Beamtin ≈ €44.000 brutto/Jahr</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end linke Spalte -->
+
+  <!-- ═══════════════ RECHTE SPALTE: ERGEBNISSE ═══════════════ -->
+  <div class="col">
+
+    <!-- CASHFLOW-BANNER -->
+    <div id="cf_banner" class="cf-banner green">
+      <div class="cf-label">Monatlicher Netto-Cashflow</div>
+      <div class="cf-amount" id="cf_amount">+€ 0</div>
+      <div class="cf-desc" id="cf_desc">Wird berechnet…</div>
+    </div>
+
+    <!-- KENNZAHLEN -->
+    <div class="card">
+      <div class="card-head"><div class="ico">📌</div><h2>Kennzahlen auf einen Blick</h2></div>
+      <div class="card-body">
+        <div class="yield-pills">
+          <div class="pill"><div class="ptitle">Bruttomietrendite</div><div class="pval" id="kz_brutto">–</div></div>
+          <div class="pill"><div class="ptitle">Nettomietrendite</div><div class="pval" id="kz_netto">–</div></div>
+          <div class="pill"><div class="ptitle">Kaufpreis / Jahresmiete</div><div class="pval" id="kz_faktor">–</div></div>
+          <div class="pill"><div class="ptitle">Finanzierungsbedarf</div><div class="pval" id="kz_darlehen">–</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASHFLOW-AUFSCHLÜSSELUNG -->
+    <div class="card">
+      <div class="card-head"><div class="ico">📈</div><h2>Monatliche Cashflow-Aufschlüsselung</h2></div>
+      <div class="card-body">
+        <div class="bline pos"><span>+ Kaltmiete (nach Leerstandspuffer)</span><span class="v" id="b_miete">–</span></div>
+        <div class="bline neg"><span>− Kreditrate (Zins + Tilgung)</span><span class="v" id="b_rate">–</span></div>
+        <div class="bline neg"><span>− Hausgeld</span><span class="v" id="b_hausgeld">–</span></div>
+        <div class="bline" id="b_steuer_p1_row"><span>+ Steuerersparnis Partner 1 (mtl. Äquivalent)</span><span class="v" id="b_steuer_p1">–</span></div>
+        <div class="bline" id="b_steuer_p2_row"><span>+ Steuerersparnis Partner 2 (mtl. Äquivalent)</span><span class="v" id="b_steuer_p2">–</span></div>
+        <div class="bsum"><span>= Netto-Cashflow / Monat</span><span id="b_sum">–</span></div>
+        <div class="note-box">
+          <strong>Zur Steuerersparnis:</strong> Sie entsteht, weil AfA + Schuldzinsen + Hausgeld die Mieteinnahmen als Werbungskosten übersteigen. Der steuerliche Verlust wird mit eurem regulären Einkommen verrechnet → Steuerrückerstattung im Folgejahr (oder monatlich via Freibetragsantrag beim Finanzamt).
+        </div>
+      </div>
+    </div>
+
+    <!-- INVESTITION & FINANZIERUNG -->
+    <div class="card">
+      <div class="card-head"><div class="ico">🔑</div><h2>Gesamtinvestition &amp; Finanzierung</h2></div>
+      <div class="card-body">
+        <div class="rrow"><span class="rlabel">Kaufpreis</span><span class="rval2" id="r_kp">–</span></div>
+        <div class="rrow"><span class="rlabel">Grunderwerbsteuer (5 %, Niedersachsen)</span><span class="rval2" id="r_gst">–</span></div>
+        <div class="rrow"><span class="rlabel">Notarkosten (ca. 1,5 %)</span><span class="rval2" id="r_notar">–</span></div>
+        <div class="rrow"><span class="rlabel">Grundbucheintrag (ca. 0,5 %)</span><span class="rval2" id="r_gb">–</span></div>
+        <div class="rrow" id="r_prov_row"><span class="rlabel">Maklerprovision</span><span class="rval2" id="r_prov">–</span></div>
+        <div class="rrow strong-row"><span class="rlabel"><strong>Kaufnebenkosten gesamt</strong></span><span class="rval2 a" id="r_nk">–</span></div>
+        <div class="rrow"><span class="rlabel">− Eigenkapital</span><span class="rval2" id="r_ek">–</span></div>
+        <div class="rrow"><span class="rlabel"><strong>Darlehensbetrag</strong></span><span class="rval2 a" id="r_darl">–</span></div>
+        <div class="divider"></div>
+        <div class="rrow"><span class="rlabel">Monatliche Annuitätsrate</span><span class="rval2" id="r_rate">–</span></div>
+        <div class="rrow"><span class="rlabel">→ davon Zinsen (Monat 1)</span><span class="rval2" id="r_zinsen_m">–</span></div>
+        <div class="rrow"><span class="rlabel">→ davon Tilgung (Monat 1)</span><span class="rval2 g" id="r_tilg_m">–</span></div>
+      </div>
+    </div>
+
+    <!-- STEUER -->
+    <div class="card">
+      <div class="card-head"><div class="ico">💡</div><h2>Steuerliche Analyse (§ 21 EStG)</h2></div>
+      <div class="card-body">
+        <div class="rrow"><span class="rlabel">Kaltmiete jährlich (nach Leerstand)</span><span class="rval2" id="r_miete_j">–</span></div>
+        <div class="rrow"><span class="rlabel">AfA (Absetzung f. Abnutzung) jährlich</span><span class="rval2" id="r_afa">–</span></div>
+        <div class="rrow"><span class="rlabel">Schuldzinsen (Werbungskosten, Jahr 1)</span><span class="rval2" id="r_zinsen_j">–</span></div>
+        <div class="rrow"><span class="rlabel">Hausgeld (Werbungskosten) jährlich</span><span class="rval2" id="r_hg_j">–</span></div>
+        <div class="rrow strong-row">
+          <span class="rlabel"><strong>Steuerliches Ergebnis</strong></span>
+          <span class="rval2" id="r_ergebnis">–</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="pblock">
+          <h4>Partner 1</h4>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Eigentumsanteil &amp; Grenzsteuersatz (inkl. Soli)</span><span class="rval2 a" id="r_p1_satz">–</span></div>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis jährlich</span><span class="rval2 g" id="r_p1_j">–</span></div>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis monatlich</span><span class="rval2 g" id="r_p1_m">–</span></div>
+        </div>
+
+        <div class="pblock">
+          <h4>Partner 2</h4>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Eigentumsanteil &amp; Grenzsteuersatz</span><span class="rval2 a" id="r_p2_satz">–</span></div>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis jährlich</span><span class="rval2 g" id="r_p2_j">–</span></div>
+          <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis monatlich</span><span class="rval2 g" id="r_p2_m">–</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10-JAHRES-ÜBERBLICK -->
+    <div class="card">
+      <div class="card-head"><div class="ico">🗓️</div><h2>10-Jahres-Überblick (Annäherung)</h2></div>
+      <div class="card-body">
+        <div class="rrow"><span class="rlabel">Restschuld nach 10 Jahren</span><span class="rval2 y" id="r_rest10">–</span></div>
+        <div class="rrow"><span class="rlabel">Aufgebautes Tilgungs-Eigenkapital</span><span class="rval2 g" id="r_tilg10">–</span></div>
+        <div class="rrow"><span class="rlabel">Gesamte Steuerersparnis (10 J.)</span><span class="rval2 g" id="r_steuer10">–</span></div>
+        <div class="rrow"><span class="rlabel">Kumulativer Cashflow (10 J.)</span><span class="rval2" id="r_cf10">–</span></div>
+        <div class="rrow"><span class="rlabel">Summe selbst gezahlte Raten (10 J.)</span><span class="rval2" id="r_eigen10">–</span></div>
+        <div class="note-box">
+          <strong>Hinweis:</strong> Wertsteigerung der Wohnung ist nicht eingerechnet. Historisch: 2–3 % p.a. in Hannover wäre bei €200.000 in 10 Jahren ca. +€44.000–66.000 zusätzliches Vermögen.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end rechte Spalte -->
+</div>
+
+<footer>
+  Alle Angaben ohne Gewähr · Grunderwerbsteuer Niedersachsen: 5 % · AfA nach § 7 EStG · Steuertarif 2025 (Grundtarif) ·
+  Keine Steuerberatung – bitte Steuerberater hinzuziehen · Stand Mai 2025
+</footer>
+
+<script>
+  // ── Deutsches Einkommensteuerrecht 2025 (Grundtarif) ──────────────────────
+  function einkommensteuer(z) {
+    z = Math.max(0, Math.round(z));
+    if (z <= 11604) return 0;
+    if (z <= 17005) { const y=(z-11604)/10000; return Math.round((979.18*y+1400)*y); }
+    if (z <= 66760) { const x=(z-17005)/10000; return Math.round((192.59*x+2397)*x+966.53); }
+    if (z <= 277825) return Math.round(0.42*z - 10908.68);
+    return Math.round(0.45*z - 19193.43);
+  }
+
+  function grenzsteuersatz(einkommen) {
+    if (einkommen <= 0) return 0;
+    const d = 100;
+    const marginal = (einkommensteuer(einkommen + d) - einkommensteuer(einkommen)) / d;
+    // Solidaritätszuschlag: 5,5 % auf ESt, greift ab ESt > 18.130 € (2025)
+    const est = einkommensteuer(einkommen);
+    const soli = est > 18130 ? 0.055 : 0;
+    return marginal * (1 + soli);
+  }
+
+  // ── Formatierung ─────────────────────────────────────────────────────────
+  function fmt(val, dec=0) {
+    const abs = Math.abs(val);
+    const s = abs.toLocaleString('de-DE', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+    return (val < 0 ? '−' : '') + '€ ' + s;
+  }
+  function fmtPct(val, dec=1) {
+    return val.toLocaleString('de-DE', {minimumFractionDigits:dec, maximumFractionDigits:dec}) + ' %';
+  }
+  function fmtX(val) {
+    return val.toLocaleString('de-DE', {minimumFractionDigits:1, maximumFractionDigits:1}) + 'x';
+  }
+
+  // ── Regionale Mietsätze ───────────────────────────────────────────────────
+  const REGIONEN = {
+    hannover:   { miete: 10.50, hint: 'Hannover: ca. 10–12 €/m² (Marktschätzung 2025)' },
+    hildesheim: { miete:  9.00, hint: 'Hildesheim: ca. 8,5–10 €/m²' },
+    goettingen: { miete: 11.00, hint: 'Göttingen: ca. 10,5–12,5 €/m² (Universitätsstadt)' },
+    manuell:    { miete:  null, hint: 'Bitte Kaltmiete manuell eingeben' },
+  };
+
+  let mitProvision = true;
+
+  function setProvision(aktiv) {
+    mitProvision = aktiv;
+    document.getElementById('btn_prov_ja').classList.toggle('on', aktiv);
+    document.getElementById('btn_prov_nein').classList.toggle('on', !aktiv);
+    document.getElementById('prov_feld').style.display = aktiv ? 'block' : 'none';
+    berechne();
+  }
+
+  document.getElementById('region').addEventListener('change', function() {
+    const r = REGIONEN[this.value];
+    if (r.miete !== null) document.getElementById('miete_qm').value = r.miete.toFixed(2);
+    document.getElementById('miete_hint').textContent = r.hint;
+    berechne();
+  });
+
+  function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+  function el(id) { return document.getElementById(id); }
+
+  function berechne() {
+    // ── Eingaben ─────────────────────────────────────────────
+    const kaufpreis  = v('kaufpreis');
+    const qm         = v('qm');
+    const afaSatz    = v('afa_typ');
+    const gbanteil   = v('gbanteil') / 100;
+    const hausgeld   = v('hausgeld');
+    const mieteQm    = v('miete_qm');
+    const leerstand  = v('leerstand') / 100;
+    const eigenkapit = v('ek');
+    const zins       = v('zins') / 100;
+    const tilgung    = v('tilgung') / 100;
+    const anteilP1   = v('anteil') / 100;
+    const anteilP2   = 1 - anteilP1;
+    const einP1      = v('ein_p1');
+    const einP2      = v('ein_p2');
+    const provPct    = mitProvision ? v('provision') / 100 : 0;
+
+    // ── Kaufnebenkosten ───────────────────────────────────────
+    const gst     = kaufpreis * 0.05;          // Grunderwerbsteuer Niedersachsen
+    const notar   = kaufpreis * 0.015;          // Notar
+    const grndB   = kaufpreis * 0.005;          // Grundbuch
+    const prov    = kaufpreis * provPct;        // Provision
+    const nk      = gst + notar + grndB + prov;
+    const darl    = Math.max(0, kaufpreis + nk - eigenkapit);
+
+    // ── Monatliche Annuitätsrate ──────────────────────────────
+    // Annuitätenformel: M = D · i_m / (1 − (1+i_m)^−n)
+    // Mit Anfangstilgung p definieren wir n implizit; einfache Näherung:
+    // Rate = D · (zins + tilgung) / 12  (gut bei niedrigen Tilgungen)
+    const i_m   = zins / 12;
+    const rate  = darl * (zins + tilgung) / 12;
+    const zinsenM1 = darl * i_m;                // Zinsen Monat 1
+    const tilgM1   = rate - zinsenM1;            // Tilgung Monat 1
+
+    // ── Mieteinnahmen ─────────────────────────────────────────
+    const miete_brutto = qm * mieteQm;
+    const miete_netto  = miete_brutto * (1 - leerstand);
+    const miete_jahr   = miete_netto * 12;
+
+    // ── AfA ───────────────────────────────────────────────────
+    const afaJahr  = kaufpreis * gbanteil * afaSatz;
+    const afaMonat = afaJahr / 12;
+
+    // ── Steuerliches Ergebnis §21 EStG ────────────────────────
+    const zinsenJahr  = darl * zins;            // Schuldzinsen Jahr 1
+    const hgJahr      = hausgeld * 12;
+    const werbung     = afaJahr + zinsenJahr + hgJahr;
+    const steuerErg   = miete_jahr - werbung;   // negativ = Verlust → gut
+
+    // ── Grenzsteuersätze ─────────────────────────────────────
+    const gstP1 = grenzsteuersatz(einP1);
+    const gstP2 = grenzsteuersatz(einP2);
+
+    // ── Steuerersparnis ───────────────────────────────────────
+    // Verlust × Anteil × Grenzsteuersatz = jährliche Ersparnis
+    const erspP1Jahr = -steuerErg * anteilP1 * gstP1;
+    const erspP2Jahr = -steuerErg * anteilP2 * gstP2;
+    const erspP1M    = erspP1Jahr / 12;
+    const erspP2M    = erspP2Jahr / 12;
+
+    // ── Monatlicher Cashflow ──────────────────────────────────
+    const cfOhne = miete_netto - rate - hausgeld;
+    const cf     = cfOhne + erspP1M + erspP2M;
+
+    // ── 10-Jahres-Prognose ────────────────────────────────────
+    // Restschuld nach 120 Monaten (Annuität-exakt)
+    let rest10 = 0;
+    if (i_m > 0 && rate > 0) {
+      const f = Math.pow(1 + i_m, 120);
+      rest10 = Math.max(0, darl * f - rate * (f - 1) / i_m);
+    } else {
+      rest10 = Math.max(0, darl - tilgM1 * 120);
+    }
+    const tilg10        = darl - rest10;
+    const erspGes10     = (erspP1Jahr + erspP2Jahr) * 10;
+    const cf10          = cf * 120;
+    // "Selbst gezahlter Anteil" = was monatlich aus eigener Tasche floss (wenn cf negativ)
+    const eigenZahlung10 = Math.max(0, -cf) * 120;
+
+    // ── Kennzahlen ────────────────────────────────────────────
+    const bruttoRendite = kaufpreis > 0 ? (miete_brutto * 12) / kaufpreis * 100 : 0;
+    const nettoRendite  = (kaufpreis + nk) > 0
+      ? (miete_jahr - hgJahr) / (kaufpreis + nk) * 100 : 0;
+    const kaufFaktor    = miete_jahr > 0 ? kaufpreis / miete_jahr : 0;
+
+    // ═══════════════ DOM AKTUALISIEREN ════════════════════════
+
+    // Cashflow-Banner
+    const banner = el('cf_banner');
+    const klasse = cf >= 0 ? 'green' : cf >= -200 ? 'yellow' : 'red';
+    banner.className = 'cf-banner ' + klasse;
+    el('cf_amount').textContent = (cf >= 0 ? '+' : '') + fmt(cf);
+    if (cf >= 0) {
+      el('cf_desc').textContent = 'Top! Der Mieter finanziert die Wohnung vollständig – du hast sogar ' + fmt(cf) + '/Monat übrig.';
+    } else if (cf >= -200) {
+      el('cf_desc').textContent = 'Fast kostendeckend! Nur ' + fmt(Math.abs(cf)) + '/Monat Eigenanteil – sehr gutes Ergebnis für eine Kapitalanlage.';
+    } else {
+      el('cf_desc').textContent = 'Du zahlst ' + fmt(Math.abs(cf)) + '/Monat selbst dazu. Kaufpreis senken, Miete prüfen oder Tilgung reduzieren.';
+    }
+
+    // Kennzahlen
+    el('kz_brutto').textContent  = fmtPct(bruttoRendite);
+    el('kz_netto').textContent   = fmtPct(nettoRendite);
+    el('kz_faktor').textContent  = fmtX(kaufFaktor);
+    el('kz_darlehen').textContent = fmt(darl);
+
+    // Cashflow-Aufschlüsselung
+    el('b_miete').textContent   = '+' + fmt(miete_netto);
+    el('b_rate').textContent    = '−' + fmt(rate);
+    el('b_hausgeld').textContent= '−' + fmt(hausgeld);
+
+    function setBline(rowId, valId, val) {
+      const row = el(rowId);
+      row.classList.remove('pos','neg','neu');
+      row.classList.add(val > 0 ? 'pos' : val < 0 ? 'neg' : 'neu');
+      el(valId).textContent = (val >= 0 ? '+' : '') + fmt(val);
+    }
+    setBline('b_steuer_p1_row', 'b_steuer_p1', erspP1M);
+    setBline('b_steuer_p2_row', 'b_steuer_p2', erspP2M);
+
+    const bsumEl = el('b_sum');
+    bsumEl.textContent = (cf >= 0 ? '+' : '') + fmt(cf);
+    bsumEl.style.color = cf >= 0 ? 'var(--green)' : cf >= -200 ? 'var(--yellow)' : 'var(--red)';
+
+    // Investition & Finanzierung
+    el('r_kp').textContent    = fmt(kaufpreis);
+    el('r_gst').textContent   = fmt(gst);
+    el('r_notar').textContent = fmt(notar);
+    el('r_gb').textContent    = fmt(grndB);
+    const provRow = el('r_prov_row');
+    if (mitProvision) {
+      provRow.style.display = 'flex';
+      el('r_prov').textContent = fmt(prov) + ' (' + fmtPct(provPct * 100) + ')';
+    } else {
+      provRow.style.display = 'none';
+    }
+    el('r_nk').textContent     = fmt(nk);
+    el('r_ek').textContent     = fmt(eigenkapit);
+    el('r_darl').textContent   = fmt(darl);
+    el('r_rate').textContent   = fmt(rate) + ' / Monat';
+    el('r_zinsen_m').textContent = fmt(zinsenM1) + ' / Monat';
+    el('r_tilg_m').textContent   = fmt(tilgM1) + ' / Monat';
+
+    // Steuer
+    el('r_miete_j').textContent = fmt(miete_jahr) + ' / Jahr';
+    el('r_afa').textContent     = fmt(afaJahr) + ' / Jahr  (' + fmt(afaMonat) + ' / Monat)';
+    el('r_zinsen_j').textContent= fmt(zinsenJahr) + ' / Jahr';
+    el('r_hg_j').textContent    = fmt(hgJahr) + ' / Jahr';
+
+    const ergEl = el('r_ergebnis');
+    if (steuerErg <= 0) {
+      ergEl.textContent = fmt(steuerErg) + ' / Jahr  → steuerlicher Verlust, spart Steuern!';
+      ergEl.className = 'rval2 g';
+    } else {
+      ergEl.textContent = '+' + fmt(steuerErg) + ' / Jahr  → Überschuss, zusätzliche Steuerlast';
+      ergEl.className = 'rval2 r';
+    }
+
+    el('r_p1_satz').textContent = fmtPct(anteilP1 * 100, 0) + ' Anteil · ' + fmtPct(gstP1 * 100) + ' Grenzsteuersatz';
+    function setSteuerVal(jId, mId, jVal, mVal) {
+      const jEl = el(jId); const mEl = el(mId);
+      jEl.textContent = (jVal >= 0 ? '+' : '') + fmt(jVal) + ' / Jahr';
+      mEl.textContent = (mVal >= 0 ? '+' : '') + fmt(mVal) + ' / Monat';
+      jEl.className = 'rval2 ' + (jVal >= 0 ? 'g' : 'r');
+      mEl.className = 'rval2 ' + (mVal >= 0 ? 'g' : 'r');
+    }
+    setSteuerVal('r_p1_j','r_p1_m', erspP1Jahr, erspP1M);
+    el('r_p2_satz').textContent = fmtPct(anteilP2 * 100, 0) + ' Anteil · ' + fmtPct(gstP2 * 100) + ' Grenzsteuersatz';
+    setSteuerVal('r_p2_j','r_p2_m', erspP2Jahr, erspP2M);
+
+    // 10 Jahre
+    el('r_rest10').textContent   = fmt(rest10);
+    el('r_tilg10').textContent   = '+' + fmt(tilg10);
+    const s10El = el('r_steuer10');
+    s10El.textContent = (erspGes10 >= 0 ? '+' : '') + fmt(erspGes10);
+    s10El.className   = 'rval2 ' + (erspGes10 >= 0 ? 'g' : 'r');
+    const cf10El = el('r_cf10');
+    cf10El.textContent = (cf10 >= 0 ? '+' : '') + fmt(cf10);
+    cf10El.className   = 'rval2 ' + (cf10 >= 0 ? 'g' : 'r');
+    el('r_eigen10').textContent = eigenZahlung10 > 0
+      ? fmt(eigenZahlung10) + ' (Eigenanteil aus eigener Tasche)'
+      : '€ 0 – vollständig durch Mieter finanziert!';
+  }
+
+  // Live-Updates bei jeder Eingabe
+  document.querySelectorAll('input, select').forEach(inp => {
+    inp.addEventListener('input', berechne);
+    inp.addEventListener('change', berechne);
+  });
+
+  // Erstberechnung
+  berechne();
+</script>
+</body>
+</html>
