@@ -641,7 +641,7 @@
     const bruttoRendite = kaufpreis > 0 ? (miete_brutto * 12) / kaufpreis * 100 : 0;
     const nettoRendite  = (kaufpreis + nk) > 0
       ? (miete_jahr - hgJahr) / (kaufpreis + nk) * 100 : 0;
-    const kaufFaktor    = miete_jahr > 0 ? kaufpreis / miete_jahr : 0;
+    const kaufFaktor    = miete_brutto > 0 ? kaufpreis / (miete_brutto * 12) : 0;
 
     // ═══════════════ DOM AKTUALISIEREN ════════════════════════
 
