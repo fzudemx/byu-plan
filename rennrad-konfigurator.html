@@ -34,6 +34,25 @@
     }
     .back-nav:hover { color: var(--accent); }
 
+    /* ── Bike type filter bar ── */
+    .biketype-bar {
+      max-width: 1300px; margin: 14px auto 0; padding: 0 24px;
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    }
+    .biketype-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text2); margin-right: 2px;
+    }
+    .bfbtn {
+      padding: 7px 20px; border-radius: 22px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); font-size: 13px; cursor: pointer;
+      font-family: inherit; font-weight: 600; transition: all .15s;
+    }
+    .bfbtn.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bfbtn.on.gravel { background: #b45309; border-color: #d97706; }
+    .bfbtn:hover:not(.on) { border-color: #4a5080; color: var(--text); }
+
     /* sticky mobile price bar */
     .mobile-bar {
       display: none; position: sticky; top: 0; z-index: 100;
@@ -52,7 +71,6 @@
     }
     @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
 
-    /* ── Config column ─────────────────── */
     .config-col { display: flex; flex-direction: column; gap: 16px; }
 
     .section-card {
@@ -80,7 +98,7 @@
       overflow: hidden; text-overflow: ellipsis; max-width: 160px;
     }
 
-    .filter-row { padding: 12px 16px 0; display: flex; gap: 7px; }
+    .filter-row { padding: 12px 16px 0; display: flex; gap: 7px; flex-wrap: wrap; }
     .fbtn {
       padding: 4px 14px; border-radius: 20px;
       border: 1px solid var(--border); background: transparent;
@@ -91,30 +109,53 @@
 
     .options-grid {
       padding: 14px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
       gap: 10px;
     }
     @media (max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
 
-    /* ── Option cards ────────────────── */
+    /* ── Option cards ── */
     .opt-card {
       background: var(--surface2); border: 2px solid var(--border);
-      border-radius: 10px; padding: 13px; cursor: pointer;
-      transition: border-color .15s, background .15s;
+      border-radius: 10px; cursor: pointer; overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
       position: relative;
     }
-    .opt-card:hover { border-color: #4a5080; }
-    .opt-card.selected { border-color: var(--accent); background: rgba(108,141,250,.07); }
+    .opt-card:hover { border-color: #4a5080; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+    .opt-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 24px rgba(108,141,250,.2); }
+
+    /* product image area */
+    .opt-img {
+      height: 108px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .opt-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .opt-img svg {
+      width: 76px; height: 54px; flex-shrink: 0;
+      filter: drop-shadow(0 2px 14px var(--ic, rgba(108,141,250,.65)));
+      transition: filter .3s;
+    }
+    .opt-card.selected .opt-img svg {
+      filter: drop-shadow(0 0 18px var(--ic, rgba(108,141,250,.9)));
+    }
+
     .check-ico {
-      position: absolute; top: 10px; right: 10px;
+      position: absolute; top: 8px; right: 8px; z-index: 3;
       width: 20px; height: 20px; border-radius: 50%;
       background: var(--accent); display: none;
       align-items: center; justify-content: center;
       font-size: 10px; color: #fff; font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,.5);
     }
     .opt-card.selected .check-ico { display: flex; }
 
-    .opt-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; padding-right: 26px; }
+    .opt-content { padding: 11px 12px 12px; }
+    .opt-name { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
     .opt-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 7px; }
     .opt-tag {
       font-size: 10px; padding: 2px 7px; border-radius: 20px;
@@ -130,9 +171,27 @@
     .opt-inkl { font-size: 10px; color: var(--text2); margin-top: 5px; font-style: italic; }
     .opt-price { font-size: 17px; font-weight: 800; color: var(--accent); margin-top: 9px; }
 
-    /* ── Summary column ──────────────── */
+    /* ── Summary column ── */
     .summary-col { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 14px; }
     @media (max-width: 960px) { .summary-col { position: static; } }
+
+    /* Bike preview card */
+    .preview-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .preview-head {
+      padding: 10px 16px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .preview-head h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .preview-head span { font-size: 11px; color: var(--text2); }
+    .preview-body {
+      padding: 16px 12px 12px;
+      background: linear-gradient(180deg, #0d0d18 0%, #111118 100%);
+    }
+    #bike-svg { width: 100%; height: auto; display: block; }
 
     .sum-card {
       background: var(--surface); border: 1px solid var(--border);
@@ -193,6 +252,13 @@
   <p>Carbon-Rahmen &amp; Komponenten aus China · Shimano &amp; SRAM Schaltgruppen · Preise ca. (Stand 2025)</p>
 </header>
 
+<div class="biketype-bar">
+  <span class="biketype-label">Typ:</span>
+  <button class="bfbtn on"  id="bf-alle"       onclick="setBiketyp('alle')">🚲 Alle</button>
+  <button class="bfbtn"     id="bf-rennrad"    onclick="setBiketyp('rennrad')">🏁 Rennrad</button>
+  <button class="bfbtn gravel" id="bf-gravelbike" onclick="setBiketyp('gravelbike')">🌾 Gravelbike</button>
+</div>
+
 <div class="mobile-bar">
   <div>
     <div class="mobile-bar-label">Gesamtpreis</div>
@@ -205,8 +271,107 @@
   <div class="config-col" id="config-col"></div>
 
   <div class="summary-col">
+
+    <!-- Live bike preview -->
+    <div class="preview-card">
+      <div class="preview-head">
+        <h2>Dein Rad</h2>
+        <span id="preview-label">Wähle Komponenten</span>
+      </div>
+      <div class="preview-body">
+        <svg id="bike-svg" viewBox="0 0 400 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- Ground shadow -->
+          <ellipse cx="200" cy="226" rx="160" ry="4" fill="rgba(255,255,255,.03)"/>
+
+          <!-- Chain (behind everything) -->
+          <path id="bv-chain" d="M158 184 Q 218 208 318 172" stroke="#1e1e30" stroke-width="2" fill="none" stroke-dasharray="5 3"/>
+
+          <!-- Rear wheel -->
+          <g id="bv-rear-wheel">
+            <circle cx="82" cy="168" r="54" stroke="#1e1e2e" stroke-width="9"/>
+            <circle cx="82" cy="168" r="49" stroke="#16162a" stroke-width="1.5"/>
+            <line x1="82" y1="168" x2="82" y2="114" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="82" y2="222" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="28"  y2="168" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="136" y2="168" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="44"  y2="130" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="120" y2="206" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="120" y2="130" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="82" y1="168" x2="44"  y2="206" stroke="#1e1e38" stroke-width="1.2"/>
+            <!-- rim section -->
+            <circle id="bv-rw-rim" cx="82" cy="168" r="35.5" stroke="#2a2a48" stroke-width="27" fill="none"/>
+            <!-- hub -->
+            <circle cx="82" cy="168" r="8" fill="#1a1a30" stroke="#2e2e50" stroke-width="2"/>
+          </g>
+
+          <!-- Front wheel -->
+          <g id="bv-front-wheel">
+            <circle cx="318" cy="168" r="54" stroke="#1e1e2e" stroke-width="9"/>
+            <circle cx="318" cy="168" r="49" stroke="#16162a" stroke-width="1.5"/>
+            <line x1="318" y1="168" x2="318" y2="114" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="318" y2="222" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="264" y2="168" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="372" y2="168" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="280" y2="130" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="356" y2="206" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="356" y2="130" stroke="#1e1e38" stroke-width="1.2"/>
+            <line x1="318" y1="168" x2="280" y2="206" stroke="#1e1e38" stroke-width="1.2"/>
+            <circle id="bv-fw-rim" cx="318" cy="168" r="35.5" stroke="#2a2a48" stroke-width="27" fill="none"/>
+            <circle cx="318" cy="168" r="8" fill="#1a1a30" stroke="#2e2e50" stroke-width="2"/>
+          </g>
+
+          <!-- Frame -->
+          <g id="bv-frame" stroke="#2e3060" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="158" y1="168" x2="82"  y2="168" stroke-width="3.5"/><!-- chainstay -->
+            <line x1="82"  y1="168" x2="136" y2="86"  stroke-width="2.8"/><!-- seat stay -->
+            <line x1="158" y1="168" x2="136" y2="86"  stroke-width="3.5"/><!-- seat tube -->
+            <line x1="136" y1="86"  x2="262" y2="92"  stroke-width="3.5"/><!-- top tube -->
+            <line x1="158" y1="168" x2="276" y2="118" stroke-width="3.5"/><!-- down tube -->
+            <line x1="262" y1="92"  x2="276" y2="118" stroke-width="4"/>  <!-- head tube -->
+            <line x1="276" y1="118" x2="318" y2="168" stroke-width="3"/>  <!-- fork -->
+            <!-- seat post -->
+            <line x1="137" y1="88"  x2="131" y2="70"  stroke-width="3"/>
+          </g>
+
+          <!-- Saddle -->
+          <g id="bv-saddle">
+            <path d="M116,67 C124,62 133,61 147,64" stroke="#2a2a50" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Drivetrain -->
+          <g id="bv-drivetrain">
+            <circle cx="158" cy="168" r="19" stroke="#2a3060" stroke-width="2.8" fill="none"/>
+            <circle cx="158" cy="168" r="8"  stroke="#2a3060" stroke-width="2" fill="#0f0f1a"/>
+            <line x1="158" y1="168" x2="178" y2="186" stroke="#2a3060" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="158" y1="168" x2="138" y2="150" stroke="#2a3060" stroke-width="3.5" stroke-linecap="round"/>
+          </g>
+
+          <!-- Pedals -->
+          <g id="bv-pedals">
+            <rect x="173" y="183" width="14" height="6" rx="2" fill="#1e1e32"/>
+            <rect x="124" y="147" width="14" height="6" rx="2" fill="#1e1e32"/>
+          </g>
+
+          <!-- Cockpit -->
+          <g id="bv-cockpit" stroke="#2a2a52" stroke-linecap="round">
+            <!-- stem -->
+            <line x1="262" y1="92"  x2="250" y2="76" stroke-width="3.5"/>
+            <!-- bar top -->
+            <line x1="236" y1="76"  x2="264" y2="76" stroke-width="3.5"/>
+            <!-- left drop -->
+            <path id="bv-drop-left"  d="M236,76 C230,76 227,83 227,93" stroke-width="2.8" fill="none"/>
+            <!-- right drop -->
+            <path id="bv-drop-right" d="M264,76 C270,76 273,83 273,93" stroke-width="2.8" fill="none"/>
+          </g>
+
+        </svg>
+      </div>
+    </div>
+
+    <!-- Price + component list -->
     <div class="sum-card">
-      <div class="sum-head"><h2>🚲 Dein Traumrad</h2></div>
+      <div class="sum-head"><h2>Zusammenfassung</h2></div>
       <div class="price-banner">
         <div class="price-label">Gesamtpreis (ca.)</div>
         <div class="price-total" id="sum-price">€ 0</div>
@@ -232,77 +397,105 @@
 const TEILE = {
   rahmen: [
     {
-      id: 'dengfu-fm686', name: 'Dengfu FM686', typ: 'Aero',
+      id: 'dengfu-fm686', name: 'Dengfu FM686', typ: 'Aero', biketyp: ['rennrad'],
       material: 'Carbon T700', gewicht: 820, preis: 449, bremse: 'Disc',
       inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
-      beschreibung: 'Einer der beliebtesten Aerorahmen aus China. Internes Kabelrouting für Di2 & eTap, interne Bremsleitung'
+      beschreibung: 'Einer der beliebtesten Aerorahmen aus China. Internes Kabelrouting für Di2 & eTap'
     },
     {
-      id: 'trifox-x16', name: 'Trifox X16', typ: 'Endurance',
+      id: 'trifox-x16', name: 'Trifox X16', typ: 'Endurance', biketyp: ['rennrad'],
       material: 'Carbon T800', gewicht: 990, preis: 379, bremse: 'Disc',
       inkl: 'Rahmen, Gabel, Steuersatz',
-      beschreibung: 'Komfortabler Endurance-Rahmen mit erhöhtem Stack. Ideal für lange Ausfahrten und Gran Fondo'
+      beschreibung: 'Komfortabler Endurance-Rahmen mit erhöhtem Stack. Ideal für lange Ausfahrten'
     },
     {
-      id: 'twitter-cyclone', name: 'Twitter Cyclone Pro', typ: 'Aero',
+      id: 'twitter-cyclone', name: 'Twitter Cyclone Pro', typ: 'Aero', biketyp: ['rennrad'],
       material: 'Carbon T700', gewicht: 870, preis: 419, bremse: 'Disc',
       inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
-      beschreibung: 'Windschnittiges Design mit semi-integriertem Cockpit. Vollständiges internes Kabelrouting'
+      beschreibung: 'Windschnittiges Design mit semi-integriertem Cockpit. Vollständiges internes Routing'
     },
     {
-      id: 'lightcarbon-833', name: 'LightCarbon LC-833', typ: 'Kletter',
+      id: 'lightcarbon-833', name: 'LightCarbon LC-833', typ: 'Kletter', biketyp: ['rennrad'],
       material: 'Carbon T1000', gewicht: 720, preis: 549, bremse: 'Disc/Rim',
       inkl: 'Rahmen, Gabel, Steuersatz',
-      beschreibung: 'Ultraleichter Kletterrahmen aus hochwertigem T1000-Carbon. Für ambitionierte Bergfahrer'
+      beschreibung: 'Ultraleichter Kletterrahmen aus T1000-Carbon. Für ambitionierte Bergfahrer'
     },
     {
-      id: 'sava-herd', name: 'Sava Herd 7.0', typ: 'All-round',
+      id: 'sava-herd', name: 'Sava Herd 7.0', typ: 'All-round', biketyp: ['rennrad'],
       material: 'Carbon T800', gewicht: 960, preis: 319, bremse: 'Disc',
       inkl: 'Rahmen, Gabel, Steuersatz, Sattelstütze',
-      beschreibung: 'Günstiger Einstieg in Carbon-Rennräder. Gutes Preis-Leistungs-Verhältnis, einsteigerfreundlich'
+      beschreibung: 'Günstiger Einstieg in Carbon. Gutes Preis-Leistungs-Verhältnis, einsteigerfreundlich'
     },
     {
-      id: 'ourea-r5', name: 'Ourea R5 Disc', typ: 'Race',
+      id: 'ourea-r5', name: 'Ourea R5 Disc', typ: 'Race', biketyp: ['rennrad'],
       material: 'Carbon T800/T1000', gewicht: 840, preis: 489, bremse: 'Disc',
       inkl: 'Rahmen, Gabel, Steuersatz, Sattelklemme',
-      beschreibung: 'Modernes Race-Design, Mischung aus T800 und T1000 Carbon. Steif und leicht zugleich'
+      beschreibung: 'Modernes Race-Design. Mischung aus T800 und T1000 Carbon, steif und leicht'
+    },
+    {
+      id: 'dengfu-fm188', name: 'Dengfu FM188', typ: 'Gravel', biketyp: ['gravelbike'],
+      material: 'Carbon T700/T800', gewicht: 1050, preis: 419, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz',
+      beschreibung: '700C/650B kompatibel, Reifenfreiheit bis 45mm, Bikepacking-Ösen serienmäßig'
+    },
+    {
+      id: 'lightcarbon-lcg002', name: 'LightCarbon LCG-002', typ: 'Gravel', biketyp: ['gravelbike'],
+      material: 'Carbon T800', gewicht: 940, preis: 489, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz',
+      beschreibung: 'Premium Gravelrahmen, Flat-Mount, Reifenfreiheit 45mm. Sehr steif für Gravelrennen'
+    },
+    {
+      id: 'twitter-allroad', name: 'Twitter All-Road Pro', typ: 'Gravel', biketyp: ['gravelbike'],
+      material: 'Carbon T700', gewicht: 1120, preis: 369, bremse: 'Disc',
+      inkl: 'Rahmen, Gabel, Steuersatz, Gepäckträgeraufnahme',
+      beschreibung: 'Guter Gravel-Einstieg. Viele Ösen für Bikepacking, Reifenfreiheit bis 40mm'
     },
   ],
 
   schaltgruppe: [
     {
-      id: 'shi-105-mech', name: 'Shimano 105 R7100', marke: 'shimano',
-      typ: 'Mechanisch', gaenge: '2×12', gewicht: 2748, preis: 349,
-      beschreibung: 'Zuverlässiger Einstieg ins 12-Gang-System. Kabelgesteuert, sehr wartungsfreundlich und langlebig'
+      id: 'shi-105-mech', name: 'Shimano 105 R7100', marke: 'shimano', typ: 'Mechanisch',
+      biketyp: ['rennrad'], gaenge: '2×12', gewicht: 2748, preis: 349,
+      beschreibung: 'Zuverlässiger Einstieg ins 12-Gang-System. Kabelgesteuert, wartungsfreundlich'
     },
     {
-      id: 'shi-105-di2', name: 'Shimano 105 Di2', marke: 'shimano',
-      typ: 'Elektronisch', gaenge: '2×12', gewicht: 2552, preis: 749,
-      beschreibung: 'Elektronisches Schalten mit identischer Logik wie Ultegra Di2. Präzise, wartungsarm, Topwert'
+      id: 'shi-105-di2', name: 'Shimano 105 Di2', marke: 'shimano', typ: 'Elektronisch',
+      biketyp: ['rennrad'], gaenge: '2×12', gewicht: 2552, preis: 749,
+      beschreibung: 'Elektronisches Schalten mit identischer Logik wie Ultegra Di2. Präzise, Topwert'
     },
     {
-      id: 'shi-ultegra-di2', name: 'Shimano Ultegra Di2', marke: 'shimano',
-      typ: 'Elektronisch', gaenge: '2×12', gewicht: 2338, preis: 1099,
-      beschreibung: 'Semi-Pro Technologie. Leichter als 105 Di2, identische Firmware wie Dura-Ace. Absoluter Top-Tipp'
+      id: 'shi-ultegra-di2', name: 'Shimano Ultegra Di2', marke: 'shimano', typ: 'Elektronisch',
+      biketyp: ['rennrad'], gaenge: '2×12', gewicht: 2338, preis: 1099,
+      beschreibung: 'Semi-Pro Technologie. Leichter als 105 Di2, identische Firmware wie Dura-Ace'
     },
     {
-      id: 'shi-duraace-di2', name: 'Shimano Dura-Ace Di2', marke: 'shimano',
-      typ: 'Elektronisch', gaenge: '2×12', gewicht: 1902, preis: 2399,
+      id: 'shi-duraace-di2', name: 'Shimano Dura-Ace Di2', marke: 'shimano', typ: 'Elektronisch',
+      biketyp: ['rennrad'], gaenge: '2×12', gewicht: 1902, preis: 2399,
       beschreibung: 'Shimanos Spitzenklasse. Titanschrauben, CNC-Finish, UCI Pro Tour Standard'
     },
     {
-      id: 'sram-rival', name: 'SRAM Rival eTap AXS', marke: 'sram',
-      typ: 'Kabellos', gaenge: '2×12', gewicht: 2612, preis: 649,
-      beschreibung: 'Günstigster Einstieg ins kabellose Schalten. XDR-Freilaufkörper am Laufrad erforderlich'
+      id: 'shi-grx-rx820', name: 'Shimano GRX RX820 Di2', marke: 'shimano', typ: 'Elektronisch',
+      biketyp: ['gravelbike'], gaenge: '1×12 / 2×11', gewicht: 2480, preis: 949,
+      beschreibung: 'Shimanos Top-Gravelgruppe. Di2-Technologie, optimiert für Off-Road und Gravelrennen'
     },
     {
-      id: 'sram-force', name: 'SRAM Force eTap AXS', marke: 'sram',
-      typ: 'Kabellos', gaenge: '2×12', gewicht: 2358, preis: 949,
+      id: 'shi-grx-rx610', name: 'Shimano GRX RX610', marke: 'shimano', typ: 'Mechanisch',
+      biketyp: ['gravelbike'], gaenge: '1×11 / 2×11', gewicht: 2850, preis: 449,
+      beschreibung: 'Günstiger Einstieg in die GRX-Welt. Robust, wartungsfreundlich, fürs Gelände'
+    },
+    {
+      id: 'sram-rival', name: 'SRAM Rival eTap AXS', marke: 'sram', typ: 'Kabellos',
+      biketyp: ['rennrad', 'gravelbike'], gaenge: '2×12', gewicht: 2612, preis: 649,
+      beschreibung: 'Günstigster Einstieg ins kabellose Schalten. XDR-Freilaufkörper erforderlich'
+    },
+    {
+      id: 'sram-force', name: 'SRAM Force eTap AXS', marke: 'sram', typ: 'Kabellos',
+      biketyp: ['rennrad', 'gravelbike'], gaenge: '2×12', gewicht: 2358, preis: 949,
       beschreibung: 'Kabellos & leicht. Ausgezeichnetes Preis-Leistungs-Verhältnis im SRAM-Lineup'
     },
     {
-      id: 'sram-red', name: 'SRAM Red eTap AXS', marke: 'sram',
-      typ: 'Kabellos', gaenge: '2×12', gewicht: 2012, preis: 2149,
+      id: 'sram-red', name: 'SRAM Red eTap AXS', marke: 'sram', typ: 'Kabellos',
+      biketyp: ['rennrad'], gaenge: '2×12', gewicht: 2012, preis: 2149,
       beschreibung: 'SRAMs Flaggschiff. Carbon-Kurbel, geringstes Gewicht, maximale Schaltpräzision'
     },
   ],
@@ -310,101 +503,121 @@ const TEILE = {
   laufraeder: [
     {
       id: 'yoeleo-r38', name: 'Yoeleo R38', profil: '38mm', felge: '25mm int.',
-      gewicht: 1460, preis: 349,
+      biketyp: ['rennrad'], gewicht: 1460, preis: 349,
       beschreibung: 'Niedriges Profil für Berge & Wind. Sehr vielseitig, ideal für hügeliges Terrain'
     },
     {
       id: 'yoeleo-r51', name: 'Yoeleo R51', profil: '50mm', felge: '25mm int.',
-      gewicht: 1520, preis: 389,
+      biketyp: ['rennrad'], gewicht: 1520, preis: 389,
       beschreibung: 'Meistverkauftes China-Laufrad. Gutes Allround-Profil für Rennen & Training'
     },
     {
       id: 'lightcarbon-r50', name: 'LightCarbon LC-R50C', profil: '50mm', felge: '28mm int.',
-      gewicht: 1480, preis: 359,
-      beschreibung: 'Breite 28mm-Felge für mehr Fahrkomfort und Volumenreifen. Hookless-Design'
+      biketyp: ['rennrad'], gewicht: 1480, preis: 359,
+      beschreibung: 'Breite 28mm-Felge für Komfort und Volumenreifen. Hookless-Design'
     },
     {
       id: 'winspace-hyper', name: 'Winspace Hyper 50', profil: '50mm', felge: '25mm int.',
-      gewicht: 1390, preis: 429,
+      biketyp: ['rennrad'], gewicht: 1390, preis: 429,
       beschreibung: 'Premium-Laufrad aus China. Sapim CX-Ray Speichen serienmäßig, sehr leicht'
     },
     {
       id: 'elitewheels-drive', name: 'Elitewheels Drive 50D', profil: '50mm', felge: '25mm int.',
-      gewicht: 1440, preis: 399,
+      biketyp: ['rennrad'], gewicht: 1440, preis: 399,
       beschreibung: 'Hochwertige Naben, DT Swiss Champion Speichen. Gute Allround-Performance'
     },
     {
       id: 'farsports-88', name: 'FarSports FSC88', profil: '88mm', felge: '25mm int.',
-      gewicht: 1620, preis: 449,
-      beschreibung: 'Tiefes Aero-Profil für Zeitfahren & Flachrennen. Nicht für windige Bergfahrten geeignet'
+      biketyp: ['rennrad'], typ: 'Aero', gewicht: 1620, preis: 449,
+      beschreibung: 'Tiefes Aero-Profil für Zeitfahren & Flachrennen. Nicht für windige Bergfahrten'
+    },
+    {
+      id: 'lightcarbon-lcg38', name: 'LightCarbon LCG-38 Wide', profil: '38mm', felge: '30mm int.',
+      biketyp: ['gravelbike'], typ: 'Gravel', gewicht: 1540, preis: 369,
+      beschreibung: 'Breite 30mm-Felge für Gravelreifen bis 45mm. 700C, hookless tubeless-ready'
+    },
+    {
+      id: 'winspace-g50', name: 'Winspace G50 Gravel', profil: '50mm', felge: '30mm int.',
+      biketyp: ['rennrad', 'gravelbike'], typ: 'Gravel', gewicht: 1420, preis: 419,
+      beschreibung: 'Vielseitig für Rennrad und Gravel. Breite Felge für Reifen bis 38mm tubeless'
     },
   ],
 
   cockpit: [
     {
       id: 'china-compact', name: 'Carbon Compact (China)', typ: 'Compact',
-      breite: '420mm', gewicht: 275, preis: 79,
-      beschreibung: 'Kompakter Lenker + Vorbau aus unidirektionalem Carbon. Sehr gutes Preis-Leistungs-Verhältnis'
+      biketyp: ['rennrad'], breite: '420mm', gewicht: 275, preis: 79,
+      beschreibung: 'Kompakter Lenker + Vorbau aus Carbon. Sehr gutes Preis-Leistungs-Verhältnis'
     },
     {
       id: 'china-aero', name: 'Carbon Aero-Bar (China)', typ: 'Aero Flach',
-      breite: '420mm', gewicht: 258, preis: 119,
-      beschreibung: 'Flacher Aero-Lenker für Race-Position. Kompatibel mit internem Kabelrouting der meisten Rahmen'
+      biketyp: ['rennrad'], breite: '420mm', gewicht: 258, preis: 119,
+      beschreibung: 'Flacher Aero-Lenker für Race-Position. Kompatibel mit internem Kabelrouting'
     },
     {
       id: 'deda-alanera', name: 'Deda Alanera DC', typ: 'Integral',
-      breite: '420mm', gewicht: 335, preis: 229,
-      beschreibung: 'Integriertes Einteil-Cockpit (Bar + Stem). Sehr saubere Optik, für Di2 & eTap geeignet'
+      biketyp: ['rennrad'], breite: '420mm', gewicht: 335, preis: 229,
+      beschreibung: 'Integriertes Einteil-Cockpit (Bar + Stem). Sehr saubere Optik, für Di2 & eTap'
     },
     {
       id: '3t-aero', name: '3T Aeroghiaia Pro', typ: 'Aero',
-      breite: '420mm', gewicht: 318, preis: 189,
-      beschreibung: 'Bewährtes 3T-Qualitätsprodukt. Breite Größenauswahl, sehr verbreitet in der Szene'
+      biketyp: ['rennrad'], breite: '420mm', gewicht: 318, preis: 189,
+      beschreibung: 'Bewährtes 3T-Qualitätsprodukt. Breite Größenauswahl, sehr verbreitet'
+    },
+    {
+      id: 'china-flared', name: 'Carbon Flared Bar (China)', typ: 'Flared',
+      biketyp: ['gravelbike'], breite: '460mm', gewicht: 265, preis: 89,
+      beschreibung: 'Ausgeflorter Carbon-Lenker für Gravel. 12° Flare für mehr Kontrolle im Gelände'
+    },
+    {
+      id: 'ritchey-kyote', name: 'Ritchey Comp Kyote', typ: 'Flared',
+      biketyp: ['gravelbike'], breite: '460mm', gewicht: 310, preis: 79,
+      beschreibung: 'Bewährter Gravellenker. 16° Flare, ergonomische Form, sehr robust'
     },
   ],
 
   sattel: [
     {
       id: 'china-carbon', name: 'Carbon Sattel (China)', breite: '143mm',
-      gewicht: 145, preis: 49,
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 145, preis: 49,
       beschreibung: 'Ultraleicht & günstig. Wenig Polsterung – besser für kurze bis mittlere Touren'
     },
     {
       id: 'fizik-argo', name: 'Fizik Argo Vento R3', breite: '150mm',
-      gewicht: 195, preis: 89,
-      beschreibung: 'Kurzer Highend-Sattel für aggressive Sitzposition. Carbon-Schienen, sehr gut verarbeitet'
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 195, preis: 89,
+      beschreibung: 'Kurzer Highend-Sattel für aggressive Sitzposition. Carbon-Schienen, top verarbeitet'
     },
     {
       id: 'selle-slr', name: 'Selle Italia SLR Boost Kit', breite: '145mm',
-      gewicht: 175, preis: 109,
-      beschreibung: 'Klassiker im Radsport. Sehr bewährt, Titanschienen-Option, passend für viele Fahrertypen'
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 175, preis: 109,
+      beschreibung: 'Klassiker im Radsport. Titanschienen-Option, passend für viele Fahrertypen'
     },
     {
       id: 'prologo-dim', name: 'Prologo Dimension NDR', breite: '143mm',
-      gewicht: 212, preis: 79,
-      beschreibung: 'Guter Einstiegssattel für Rennräder. Bequemer als reine Carbon-Sättel, sehr empfehlenswert'
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 212, preis: 79,
+      beschreibung: 'Guter Einstiegssattel. Bequemer als reine Carbon-Sättel, sehr empfehlenswert'
     },
   ],
 
   pedale: [
     {
       id: 'keine', name: 'Ohne Pedale', system: '–',
-      gewicht: 0, preis: 0,
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 0, preis: 0,
       beschreibung: 'Pedale separat kaufen oder bereits vorhanden'
     },
     {
       id: 'shi-r550', name: 'Shimano PD-R550', system: 'SPD-SL',
-      gewicht: 328, preis: 35,
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 328, preis: 35,
       beschreibung: 'Zuverlässige Einstiegspedale. Aluplattform, leicht genug für Training & Rennen'
     },
     {
       id: 'shi-r8000', name: 'Shimano PD-R8000', system: 'SPD-SL',
-      gewicht: 248, preis: 89,
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 248, preis: 89,
       beschreibung: 'Ultegra-Pedale. Breite Plattform, Carbon-Achsstift, spürbar leichter als R550'
     },
     {
       id: 'look-keo', name: 'Look Kéo 2 Max Carbon', system: 'Look Kéo',
-      gewicht: 240, preis: 79,
+      biketyp: ['rennrad', 'gravelbike'], gewicht: 240, preis: 79,
       beschreibung: 'Große 400mm² Plattform, Carbon-Achse. Sehr beliebt bei Triathleten & Rennradfahrern'
     },
   ],
@@ -412,17 +625,207 @@ const TEILE = {
 
 // ═══════════════════ KONFIGURATION ═══════════════════
 
-const KATS = ['rahmen', 'schaltgruppe', 'laufraeder', 'cockpit', 'sattel', 'pedale'];
-const KAT_NAME  = { rahmen: 'Rahmen', schaltgruppe: 'Schaltgruppe', laufraeder: 'Laufräder', cockpit: 'Cockpit', sattel: 'Sattel', pedale: 'Pedale' };
-const KAT_ICON  = { rahmen: '🏗️', schaltgruppe: '⚙️', laufraeder: '🔵', cockpit: '🎯', sattel: '🪑', pedale: '👟' };
+const KATS     = ['rahmen', 'schaltgruppe', 'laufraeder', 'cockpit', 'sattel', 'pedale'];
+const KAT_NAME = { rahmen: 'Rahmen', schaltgruppe: 'Schaltgruppe', laufraeder: 'Laufräder', cockpit: 'Cockpit', sattel: 'Sattel', pedale: 'Pedale' };
+const KAT_ICON = { rahmen: '🏗️', schaltgruppe: '⚙️', laufraeder: '🔵', cockpit: '🎯', sattel: '🪑', pedale: '👟' };
 
-let auswahl = { rahmen: null, schaltgruppe: null, laufraeder: null, cockpit: null, sattel: null, pedale: 'keine' };
+let auswahl     = { rahmen: null, schaltgruppe: null, laufraeder: null, cockpit: null, sattel: null, pedale: 'keine' };
 let schaltFilter = 'alle';
+let bikeTyp      = 'alle';
+
+// ═══════════════════ PRODUKT-BILDER ═══════════════════
+
+const TYP_GRAD = {
+  'Aero':        ['#060c24','#0e1c4a', '#6c8dfa'],
+  'Endurance':   ['#0c0720','#18103e', '#a78bfa'],
+  'Kletter':     ['#051206','#0a240c', '#4ade80'],
+  'All-round':   ['#060c18','#0e1c30', '#22d3ee'],
+  'Race':        ['#180506','#300a0a', '#f87171'],
+  'Gravel':      ['#160c00','#2c1800', '#fbbf24'],
+  'Mechanisch':  ['#061208','#0c2210', '#4ade80'],
+  'Elektronisch':['#060c20','#0e1a3e', '#6c8dfa'],
+  'Kabellos':    ['#0c0620','#1a1040', '#c084fc'],
+  'Compact':     ['#0c0c18','#181828', '#8090c0'],
+  'Aero Flach':  ['#060c1e','#0c183c', '#6c8dfa'],
+  'Integral':    ['#060e1c','#0c1a38', '#7c9dfa'],
+  'Flared':      ['#160c00','#2a1800', '#fbbf24'],
+};
+const KAT_GRAD = {
+  rahmen:      ['#080e20','#101c40', '#6c8dfa'],
+  schaltgruppe:['#061208','#0c2212', '#4ade80'],
+  laufraeder:  ['#080c20','#10183a', '#6c8dfa'],
+  cockpit:     ['#0c0820','#18143a', '#a78bfa'],
+  sattel:      ['#0c0a16','#1a1824', '#8090c0'],
+  pedale:      ['#0a0c14','#141822', '#8090c0'],
+};
+
+function getBildStyle(kat, t) {
+  const c = (t.typ && TYP_GRAD[t.typ]) || KAT_GRAD[kat];
+  return `background:linear-gradient(145deg,${c[0]} 0%,${c[1]} 100%);--ic:${c[2]}`;
+}
+
+const KAT_SVG = {
+  rahmen: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="16" cy="40" r="10" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+    <circle cx="64" cy="40" r="10" stroke="rgba(255,255,255,.2)" stroke-width="2"/>
+    <line x1="30" y1="40" x2="16" y2="40" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="16" y1="40" x2="27" y2="17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="30" y1="40" x2="27" y2="17" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="27" y1="17" x2="52" y2="19" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="30" y1="40" x2="54" y2="25" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="54" y1="25" x2="64" y2="40" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="22" y1="13" x2="33" y2="13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+
+  schaltgruppe: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="26" r="17" stroke="white" stroke-width="2.5"/>
+    <circle cx="30" cy="26" r="6"  fill="rgba(255,255,255,.35)"/>
+    <circle cx="61" cy="35" r="9"  stroke="white" stroke-width="2"/>
+    <circle cx="61" cy="35" r="3"  fill="rgba(255,255,255,.35)"/>
+    <path d="M30 9 L61 26" stroke="rgba(255,255,255,.3)" stroke-width="1.5" stroke-dasharray="3 2.5"/>
+  </svg>`,
+
+  laufraeder: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="26" r="22" stroke="white" stroke-width="2.5"/>
+    <circle cx="40" cy="26" r="4.5" fill="rgba(255,255,255,.4)"/>
+    <line x1="40" y1="26" x2="40" y2="4"    stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="40" y2="48"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="18" y2="26"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="62" y2="26"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="24" y2="10"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="56" y2="42"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="56" y2="10"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+    <line x1="40" y1="26" x2="24" y2="42"   stroke="rgba(255,255,255,.55)" stroke-width="1.5"/>
+  </svg>`,
+
+  cockpit: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="20" y1="20" x2="60" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <path d="M20,20 C14,20 11,27 11,36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <path d="M60,20 C66,20 69,27 69,36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <line x1="40" y1="20" x2="40" y2="38" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <line x1="33" y1="38" x2="47" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+
+  sattel: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10,29 C22,21 40,19 54,21 C63,23 69,27 70,30" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <line x1="22" y1="35" x2="58" y2="35" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="22" y1="30" x2="22" y2="35" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="58" y1="28" x2="58" y2="35" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="40" y1="35" x2="40" y2="45" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+
+  pedale: `<svg viewBox="0 0 80 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="19" width="50" height="15" rx="4" stroke="white" stroke-width="2.5"/>
+    <line x1="22" y1="19" x2="22" y2="34" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+    <line x1="32" y1="19" x2="32" y2="34" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+    <line x1="42" y1="19" x2="42" y2="34" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+    <line x1="52" y1="19" x2="52" y2="34" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>
+    <line x1="60" y1="26" x2="72" y2="26" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="72" cy="26" r="2.5" fill="white"/>
+  </svg>`,
+};
 
 // ═══════════════════ HELPERS ═══════════════════
 
 function fmt(n) { return '€ ' + n.toLocaleString('de-DE'); }
 function getTeil(kat, id) { return id ? (TEILE[kat].find(t => t.id === id) || null) : null; }
+
+// ═══════════════════ BIKE PREVIEW ═══════════════════
+
+const FRAME_COLOR = {
+  'Aero':      '#6c8dfa', 'Endurance': '#a78bfa', 'Kletter':  '#4ade80',
+  'All-round': '#22d3ee', 'Race':      '#f87171', 'Gravel':   '#fbbf24',
+};
+const RIM_PRESET = {
+  '38mm': { r: 38, w: 11 },
+  '50mm': { r: 26, w: 23 },
+  '88mm': { r: 10, w: 39 },
+};
+
+function setSvgAttr(sel, attr, val) {
+  document.querySelectorAll(sel).forEach(el => el.setAttribute(attr, val));
+}
+
+function updateBikePreview() {
+  const frame  = getTeil('rahmen',      auswahl.rahmen);
+  const group  = getTeil('schaltgruppe',auswahl.schaltgruppe);
+  const wheel  = getTeil('laufraeder',  auswahl.laufraeder);
+  const cock   = getTeil('cockpit',     auswahl.cockpit);
+  const saddle = getTeil('sattel',      auswahl.sattel);
+  const pedal  = getTeil('pedale',      auswahl.pedale);
+
+  const dim = '#1e1e36';
+
+  // Frame color
+  const fc = (frame && FRAME_COLOR[frame.typ]) || (frame ? '#5a6aaa' : dim);
+  setSvgAttr('#bv-frame line, #bv-frame path', 'stroke', fc);
+
+  // Chain
+  const chainEl = document.getElementById('bv-chain');
+  if (chainEl) chainEl.setAttribute('stroke', group ? '#2e3460' : dim);
+
+  // Wheel rim
+  const rimData = (wheel && RIM_PRESET[wheel.profil]) || { r: 26, w: 23 };
+  const rimColor = wheel ? '#4a5a9a' : dim;
+  const isGravel = wheel && (wheel.biketyp || []).includes('gravelbike') && !((wheel.biketyp || []).includes('rennrad'));
+  const tireColor = isGravel ? '#2a2230' : '#1a1a2a';
+
+  ['bv-rw-rim', 'bv-fw-rim'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('r', rimData.r + rimData.w / 2);
+    el.setAttribute('stroke-width', rimData.w);
+    el.setAttribute('stroke', rimColor);
+  });
+
+  // Groupset chainring color
+  const driveColor = group
+    ? (group.marke === 'shimano' ? '#3a9a5a' : group.marke === 'sram' ? '#9a7a20' : '#4a5a9a')
+    : dim;
+  setSvgAttr('#bv-drivetrain circle', 'stroke', driveColor);
+  setSvgAttr('#bv-drivetrain line',   'stroke', driveColor);
+
+  // Cockpit
+  const cockColor = cock ? '#6a5aaa' : dim;
+  setSvgAttr('#bv-cockpit line, #bv-cockpit path', 'stroke', cockColor);
+
+  // Flared vs standard drop bars
+  const isFlared = cock && cock.typ === 'Flared';
+  const leftDrop  = document.getElementById('bv-drop-left');
+  const rightDrop = document.getElementById('bv-drop-right');
+  if (leftDrop && rightDrop) {
+    if (isFlared) {
+      leftDrop.setAttribute('d',  'M236,76 C226,76 220,85 220,97');
+      rightDrop.setAttribute('d', 'M264,76 C274,76 280,85 280,97');
+    } else {
+      leftDrop.setAttribute('d',  'M236,76 C230,76 227,83 227,93');
+      rightDrop.setAttribute('d', 'M264,76 C270,76 273,83 273,93');
+    }
+  }
+
+  // Saddle
+  const saddleEl = document.querySelector('#bv-saddle path');
+  if (saddleEl) saddleEl.setAttribute('stroke', saddle ? '#7a6aaa' : dim);
+
+  // Pedals
+  const pedalColor = (pedal && pedal.id !== 'keine') ? '#3a3a6a' : dim;
+  setSvgAttr('#bv-pedals rect', 'fill', pedalColor);
+
+  // Frame / seat post in saddle area
+  const seatEl = document.querySelector('#bv-frame line[x1="137"]');
+  if (seatEl) seatEl.setAttribute('stroke', frame ? fc : dim);
+
+  // Label
+  const label = document.getElementById('preview-label');
+  if (label) {
+    const done = KATS.filter(k => auswahl[k] && (k !== 'pedale' || auswahl[k] !== 'keine')).length;
+    if (frame) {
+      label.textContent = frame.name + (frame.typ ? ' · ' + frame.typ : '');
+    } else {
+      label.textContent = done === 0 ? 'Wähle Komponenten' : done + ' von 6 gewählt';
+    }
+  }
+}
 
 // ═══════════════════ RENDER ═══════════════════
 
@@ -430,12 +833,32 @@ function waehle(kat, id) {
   auswahl[kat] = id;
   renderOptionen(kat);
   renderSummary();
+  updateBikePreview();
 }
 
 function setFilter(f) {
   schaltFilter = f;
-  ['alle','shimano','sram'].forEach(k => document.getElementById('f-'+k).classList.toggle('on', f === k));
+  ['alle','shimano','sram'].forEach(k =>
+    document.getElementById('f-'+k).classList.toggle('on', f === k));
   renderOptionen('schaltgruppe');
+}
+
+function setBiketyp(bt) {
+  bikeTyp = bt;
+  ['alle','rennrad','gravelbike'].forEach(k =>
+    document.getElementById('bf-'+k).classList.toggle('on', k === bt));
+  // deselect incompatible
+  KATS.forEach(kat => {
+    if (!auswahl[kat]) return;
+    if (kat === 'pedale' && auswahl[kat] === 'keine') return;
+    const t = getTeil(kat, auswahl[kat]);
+    if (t && bt !== 'alle' && t.biketyp && !t.biketyp.includes(bt)) {
+      auswahl[kat] = kat === 'pedale' ? 'keine' : null;
+    }
+  });
+  KATS.forEach(kat => renderOptionen(kat));
+  renderSummary();
+  updateBikePreview();
 }
 
 function renderOptionen(kat) {
@@ -443,6 +866,9 @@ function renderOptionen(kat) {
   if (!container) return;
 
   let teile = TEILE[kat];
+  if (bikeTyp !== 'alle') {
+    teile = teile.filter(t => !t.biketyp || t.biketyp.includes(bikeTyp));
+  }
   if (kat === 'schaltgruppe' && schaltFilter !== 'alle') {
     teile = teile.filter(t => t.marke === schaltFilter);
   }
@@ -460,8 +886,9 @@ function renderOptionen(kat) {
     if (t.marke === 'shimano') tags.push({ label: 'Shimano', cls: 'gr' });
     if (t.marke === 'sram')    tags.push({ label: 'SRAM',    cls: 'yl' });
     if (t.system && t.system !== '–') tags.push({ label: t.system, cls: '' });
+    if (t.biketyp && t.biketyp.length === 2) tags.push({ label: 'Universell', cls: 'gr' });
 
-    const gewichtStr = t.gewicht > 0
+    const gStr = t.gewicht > 0
       ? (t.gewicht >= 1000
           ? (t.gewicht / 1000).toFixed(2).replace('.', ',') + ' kg'
           : t.gewicht + ' g')
@@ -470,16 +897,20 @@ function renderOptionen(kat) {
     return `
       <div class="opt-card${sel ? ' selected' : ''}" onclick="waehle('${kat}','${t.id}')">
         <div class="check-ico">✓</div>
-        <div class="opt-name">${t.name}</div>
-        ${tags.length ? `<div class="opt-tags">${tags.map(tg => `<span class="opt-tag ${tg.cls}">${tg.label}</span>`).join('')}</div>` : ''}
-        ${gewichtStr ? `<div class="opt-spec">Gewicht: <strong>${gewichtStr}</strong></div>` : ''}
-        <div class="opt-desc">${t.beschreibung}</div>
-        ${t.inkl ? `<div class="opt-inkl">Inkl. ${t.inkl}</div>` : ''}
-        <div class="opt-price">${t.preis > 0 ? fmt(t.preis) : 'ohne Aufpreis'}</div>
+        <div class="opt-img" style="${getBildStyle(kat, t)}">
+          ${KAT_SVG[kat]}
+        </div>
+        <div class="opt-content">
+          <div class="opt-name">${t.name}</div>
+          ${tags.length ? `<div class="opt-tags">${tags.map(tg => `<span class="opt-tag ${tg.cls}">${tg.label}</span>`).join('')}</div>` : ''}
+          ${gStr ? `<div class="opt-spec">Gewicht: <strong>${gStr}</strong></div>` : ''}
+          <div class="opt-desc">${t.beschreibung}</div>
+          ${t.inkl ? `<div class="opt-inkl">Inkl. ${t.inkl}</div>` : ''}
+          <div class="opt-price">${t.preis > 0 ? fmt(t.preis) : 'ohne Aufpreis'}</div>
+        </div>
       </div>`;
   }).join('');
 
-  // Step indicator
   const stepEl  = document.getElementById('step-' + kat);
   const badgeEl = document.getElementById('badge-' + kat);
   if (stepEl)  stepEl.className = 'step-num' + (auswahl[kat] ? ' done' : '');
@@ -497,15 +928,15 @@ function renderSummary() {
     if (t) { totalPreis += t.preis; totalGewicht += t.gewicht; }
   });
 
-  const preisStr  = fmt(totalPreis);
-  const gewichtStr = totalGewicht > 0 ? (totalGewicht / 1000).toFixed(1).replace('.', ',') + ' kg' : '– kg';
+  const preisStr   = fmt(totalPreis);
+  const gewichtStr = totalGewicht > 0
+    ? (totalGewicht / 1000).toFixed(1).replace('.', ',') + ' kg' : '– kg';
 
   document.getElementById('sum-price').textContent  = preisStr;
   document.getElementById('sum-weight').textContent = gewichtStr;
   document.getElementById('mb-price').textContent   = preisStr;
   document.getElementById('mb-weight').textContent  = 'Gewicht: ' + gewichtStr;
 
-  // Component list
   document.getElementById('comp-list').innerHTML = KATS.map(kat => {
     const t = getTeil(kat, auswahl[kat]);
     return `
@@ -518,36 +949,37 @@ function renderSummary() {
       </div>`;
   }).join('');
 
-  // Compatibility
+  // Compatibility hints
   const hints = [];
   const sgruppe = getTeil('schaltgruppe', auswahl.schaltgruppe);
-  const laufrad = getTeil('laufraeder', auswahl.laufraeder);
-  const rahmen  = getTeil('rahmen', auswahl.rahmen);
+  const laufrad = getTeil('laufraeder',   auswahl.laufraeder);
+  const rahmen  = getTeil('rahmen',       auswahl.rahmen);
 
   if (sgruppe) {
     if (sgruppe.marke === 'sram') {
-      hints.push({ ico: '⚠️', text: 'SRAM eTap AXS benötigt XDR-Freilaufkörper beim Laufradkauf (nicht HG-kompatibel)' });
-    } else if (sgruppe.id !== 'shi-105-mech') {
-      hints.push({ ico: 'ℹ️', text: 'Shimano 12-speed Di2: Laufräder mit Micro Spline-Freilaufkörper bestellen' });
+      hints.push({ ico: '⚠️', text: 'SRAM eTap AXS benötigt XDR-Freilaufkörper beim Laufradkauf' });
+    } else if (sgruppe.typ === 'Elektronisch') {
+      hints.push({ ico: 'ℹ️', text: 'Shimano Di2: Laufräder mit Micro Spline-Freilaufkörper bestellen' });
     }
     if (sgruppe.typ !== 'Mechanisch' && rahmen) {
-      hints.push({ ico: '✅', text: rahmen.name + ' unterstützt vollständiges internes Kabelrouting für ' + sgruppe.name });
+      hints.push({ ico: '✅', text: rahmen.name + ' unterstützt internes Kabelrouting für ' + sgruppe.name });
     }
   }
-
   if (laufrad && laufrad.id === 'farsports-88') {
-    hints.push({ ico: '⚠️', text: '88mm-Profil: Stark windsensibel. Nur für windstille Bedingungen & Flachrennen empfohlen' });
+    hints.push({ ico: '⚠️', text: '88mm-Profil: Stark windsensibel. Nur für windstille Flachrennen' });
   }
-
   if (laufrad && laufrad.id === 'lightcarbon-r50') {
-    hints.push({ ico: 'ℹ️', text: 'Hookless-Felge: Nur Reifen mit Tubeless-Kompatibilität verwenden, max. 5 bar Luftdruck' });
+    hints.push({ ico: 'ℹ️', text: 'Hookless-Felge: Nur Tubeless-Reifen, max. 5 bar Luftdruck' });
+  }
+  if (laufrad && (laufrad.id === 'lightcarbon-lcg38' || laufrad.id === 'winspace-g50')) {
+    hints.push({ ico: 'ℹ️', text: 'Breite Gravel-Felge: Tubeless-Setup empfohlen, Reifen bis 45mm möglich' });
   }
 
   const fehlend = KATS.filter(k => !auswahl[k]).length;
   if (fehlend > 0) {
     hints.push({ ico: '💡', text: `Noch ${fehlend} Kategorie${fehlend > 1 ? 'n' : ''} nicht konfiguriert` });
   } else {
-    hints.push({ ico: '🎉', text: 'Konfiguration vollständig! Viel Spaß mit deinem neuen Traumrad.' });
+    hints.push({ ico: '🎉', text: 'Konfiguration vollständig! Viel Spaß mit deinem Traumrad.' });
   }
 
   document.getElementById('compat-box').innerHTML = hints
@@ -577,6 +1009,7 @@ function buildLayout() {
 
   KATS.forEach(kat => renderOptionen(kat));
   renderSummary();
+  updateBikePreview();
 }
 
 function kopieren() {
