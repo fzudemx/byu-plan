@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eigenheim-Rechner · byu-plan</title>
+  <link rel="icon" type="image/svg+xml" href="/byu-plan/favicon.svg" />
+  <style>
+    :root {
+      --bg: #0f0f14; --surface: #1a1a24; --surface2: #22222e;
+      --border: #2e2e3d; --text: #e8e8f0; --text2: #9090a8;
+      --accent: #fb923c; --accent2: #fcd34d;
+      --green: #4ade80; --red: #f87171; --blue: #6c8dfa;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh; padding-bottom: 60px;
+    }
+
+    /* Back button */
+    .back-btn {
+      position: fixed; top: 16px; left: 16px; z-index: 100;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text2); text-decoration: none;
+      padding: 7px 14px; border-radius: 8px; font-size: 13px;
+      display: flex; align-items: center; gap: 6px;
+      transition: color .2s, border-color .2s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    /* Sticky summary */
+    .sticky-summary {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15,15,20,.96); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .sticky-label { font-size: 11px; color: var(--text2); }
+    .sticky-amount { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+    .sticky-items { display: flex; gap: 20px; flex-wrap: wrap; }
+    .sticky-item { text-align: center; }
+    .sticky-item-val { font-size: 14px; font-weight: 700; }
+
+    /* Page header */
+    .page-header { padding: 68px 24px 0; max-width: 960px; margin: 0 auto; }
+    .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--text2); margin-bottom: 10px; }
+    .page-header h1 {
+      font-size: 34px; font-weight: 800; line-height: 1.1;
+      background: linear-gradient(135deg, #e8e8f0 40%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .page-header p { color: var(--text2); font-size: 14px; margin-top: 8px; }
+
+    /* Main */
+    .main { max-width: 960px; margin: 0 auto; padding: 28px 24px; }
+
+    /* Section label */
+    .section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--text2); margin: 38px 0 12px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 12px; font-weight: 700; color: var(--text2);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 18px;
+    }
+
+    /* Grid layouts */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) {
+      .two-col { grid-template-columns: 1fr; }
+      .three-col { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) { .three-col { grid-template-columns: 1fr; } }
+
+    /* Sliders */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--text2); margin-bottom: 7px;
+    }
+    .field label .val { font-weight: 700; color: var(--text); font-size: 14px; }
+
+    input[type="range"] {
+      -webkit-appearance: none; width: 100%; height: 4px;
+      background: var(--surface2); border-radius: 2px; outline: none; cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px;
+      background: var(--accent); border-radius: 50%;
+      box-shadow: 0 0 8px rgba(251,146,60,.45); cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px; background: var(--accent);
+      border-radius: 50%; border: none; cursor: pointer;
+    }
+
+    /* Result rows */
+    .result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-row .lbl { color: var(--text2); }
+    .result-row .v { font-weight: 600; }
+    .result-row.total .lbl { font-weight: 700; color: var(--text); font-size: 15px; }
+    .result-row.total .v { font-size: 18px; font-weight: 800; color: var(--accent); }
+    .v.neg { color: var(--red); }
+    .v.pos { color: var(--green); }
+    .v.blue { color: var(--blue); }
+
+    /* Highlight box */
+    .highlight-box {
+      background: rgba(251,146,60,.08); border: 1px solid rgba(251,146,60,.22);
+      border-radius: 10px; padding: 14px 18px; margin-bottom: 14px;
+    }
+    .highlight-box .big { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+    .highlight-box .sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+    /* Insurance input cells */
+    .ins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    @media (max-width: 480px) { .ins-grid { grid-template-columns: 1fr; } }
+    .ins-cell {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px;
+    }
+    .ins-cell .ins-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+    .ins-cell input {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text); font-size: 17px; font-weight: 700; padding: 2px 0;
+      outline: none; transition: border-color .2s;
+    }
+    .ins-cell input:focus { border-bottom-color: var(--accent); }
+    .ins-cell .ins-unit { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+    /* Equity badge */
+    .equity-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; padding: 3px 10px; border-radius: 20px;
+      font-weight: 600; margin-top: 8px;
+    }
+    .equity-badge.good { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+    .equity-badge.warn { background: rgba(252,211,77,.1); color: var(--accent2); border: 1px solid rgba(252,211,77,.25); }
+    .equity-badge.bad  { background: rgba(248,113,113,.1); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
+
+    /* Big total */
+    .big-total {
+      text-align: center; padding: 28px 20px;
+      background: linear-gradient(135deg, rgba(251,146,60,.08), rgba(252,211,77,.05));
+      border: 1px solid rgba(251,146,60,.18); border-radius: var(--radius); margin-top: 18px;
+    }
+    .big-total .number {
+      font-size: 50px; font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .big-total .lbl { font-size: 13px; color: var(--text2); margin-top: 6px; }
+
+    /* Info box */
+    .info-box {
+      background: var(--surface2); border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0; padding: 11px 15px;
+      font-size: 12px; color: var(--text2); line-height: 1.6; margin-top: 14px;
+    }
+
+    /* Charts */
+    .chart-wrap { background: var(--surface2); border-radius: 10px; padding: 4px 4px 2px; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 240px; }
+
+    /* Chart legend */
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+    /* Scenario badges */
+    .scenario-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .scenario-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; font-weight: 600; }
+    .scenario-badge.pess { color: var(--red); border-color: rgba(248,113,113,.35); background: rgba(248,113,113,.08); }
+    .scenario-badge.real { color: var(--blue); border-color: rgba(108,141,250,.35); background: rgba(108,141,250,.08); }
+    .scenario-badge.opti { color: var(--green); border-color: rgba(74,222,128,.35); background: rgba(74,222,128,.08); }
+
+    footer { text-align: center; padding: 22px; color: var(--text2); font-size: 11px; border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media (max-width: 480px) {
+      .page-header h1 { font-size: 26px; }
+      .page-header { padding-top: 58px; }
+      .big-total .number { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<a class="back-btn" href="/byu-plan/">← Dashboard</a>
+
+<!-- Sticky Summary Bar -->
+<div class="sticky-summary">
+  <div>
+    <div class="sticky-label">Monatliche Gesamtbelastung</div>
+    <div class="sticky-amount" id="s-total">– €</div>
+  </div>
+  <div class="sticky-items">
+    <div class="sticky-item">
+      <div class="sticky-label">Kredit</div>
+      <div class="sticky-item-val" id="s-kredit">– €</div>
+    </div>
+    <div class="sticky-item">
+      <div class="sticky-label">Haus NK</div>
+      <div class="sticky-item-val" id="s-nk">– €</div>
+    </div>
+    <div class="sticky-item">
+      <div class="sticky-label">Auto</div>
+      <div class="sticky-item-val" id="s-auto">– €</div>
+    </div>
+  </div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="eyebrow">Eigenheim-Finanzierung · Schulenburg, Pattensen</div>
+  <h1>Haus kaufen planen</h1>
+  <p>550.000 € Kaufpreis · Region Hannover · Niedersachsen · Vollständige Kostenrechnung</p>
+</div>
+
+<div class="main">
+
+  <!-- ─── SECTION: FINANZIERUNG ──────────────────────────────── -->
+  <div class="section-title">Finanzierung</div>
+
+  <div class="card">
+    <div class="two-col">
+
+      <!-- Left: Sliders -->
+      <div>
+        <div class="card-title">Parameter</div>
+
+        <div class="field">
+          <label>Kaufpreis <span class="val" id="l-kp">550.000 €</span></label>
+          <input type="range" id="kaufpreis" min="400000" max="800000" step="5000" value="550000" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Eigenkapital <span class="val" id="l-ek">110.000 €</span></label>
+          <input type="range" id="eigenkapital" min="20000" max="350000" step="5000" value="110000" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Sollzinssatz p.a. <span class="val" id="l-zins">3,90 %</span></label>
+          <input type="range" id="zins" min="1.5" max="7.5" step="0.05" value="3.9" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Anfangstilgung p.a. <span class="val" id="l-tilg">2,00 %</span></label>
+          <input type="range" id="tilgung" min="0.5" max="5" step="0.25" value="2.0" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Sondertilgung p.a. <span class="val" id="l-sonder">0 €</span></label>
+          <input type="range" id="sonder" min="0" max="30000" step="500" value="0" oninput="update()">
+        </div>
+
+        <div id="equity-badge-wrap"></div>
+      </div>
+
+      <!-- Right: Results -->
+      <div>
+        <div class="card-title">Ergebnis</div>
+
+        <div class="highlight-box">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px">Monatliche Kreditrate (Annuität)</div>
+          <div class="big" id="monthly-rate">– €</div>
+          <div class="sub">10 Jahre Zinsbindung · Restschuld wird anschlussfinanziert</div>
+        </div>
+
+        <div class="result-row"><span class="lbl">Kaufpreis</span><span class="v" id="r-kp">–</span></div>
+        <div class="result-row"><span class="lbl">Grunderwerbsteuer Niedersachsen (5 %)</span><span class="v neg" id="r-grunderwerb">–</span></div>
+        <div class="result-row"><span class="lbl">Notar &amp; Grundbuch (ca. 2 %)</span><span class="v neg" id="r-notar">–</span></div>
+        <div class="result-row"><span class="lbl">Maklergebühr</span><span class="v pos">0 €</span></div>
+        <div class="result-row"><span class="lbl">Eigenkapital (eingebracht)</span><span class="v" id="r-ek">–</span></div>
+        <div class="result-row total"><span class="lbl">Darlehensbetrag</span><span class="v" id="r-darlehen">–</span></div>
+        <div class="result-row" style="margin-top:4px"><span class="lbl">Restschuld nach 10 Jahren</span><span class="v neg" id="r-restschuld">–</span></div>
+        <div class="result-row"><span class="lbl">Gezahlte Zinsen (10 Jahre)</span><span class="v neg" id="r-zinsen10">–</span></div>
+        <div class="result-row"><span class="lbl">Kreditlaufzeit (gesamt)</span><span class="v blue" id="r-laufzeit">–</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── SECTION: MONATLICHE KOSTEN ───────────────────────────── -->
+  <div class="section-title">Monatliche Gesamtkosten</div>
+
+  <div class="card">
+    <div class="card-title">Laufende Kosten – alle bearbeitbar</div>
+
+    <div class="ins-grid">
+      <div class="ins-cell">
+        <div class="ins-label">Wohngebäudeversicherung</div>
+        <input type="number" id="ins-gebaeude" value="90" min="0" oninput="update()">
+        <div class="ins-unit">€ / Monat</div>
+      </div>
+      <div class="ins-cell">
+        <div class="ins-label">Hausratversicherung</div>
+        <input type="number" id="ins-hausrat" value="25" min="0" oninput="update()">
+        <div class="ins-unit">€ / Monat</div>
+      </div>
+      <div class="ins-cell">
+        <div class="ins-label">Risikolebensversicherung</div>
+        <input type="number" id="ins-rlv" value="70" min="0" oninput="update()">
+        <div class="ins-unit">€ / Monat</div>
+      </div>
+      <div class="ins-cell">
+        <div class="ins-label">Grundsteuer (Pattensen)</div>
+        <input type="number" id="ins-grundsteuer" value="130" min="0" oninput="update()">
+        <div class="ins-unit">€ / Monat</div>
+      </div>
+    </div>
+
+    <div class="result-row"><span class="lbl">Kreditrate (Zins + Tilgung)</span><span class="v neg" id="c-kredit">–</span></div>
+    <div class="result-row"><span class="lbl">Wohngebäudeversicherung</span><span class="v neg" id="c-gebaeude">–</span></div>
+    <div class="result-row"><span class="lbl">Hausratversicherung</span><span class="v neg" id="c-hausrat">–</span></div>
+    <div class="result-row"><span class="lbl">Risikolebensversicherung</span><span class="v neg" id="c-rlv">–</span></div>
+    <div class="result-row"><span class="lbl">Grundsteuer</span><span class="v neg" id="c-grundsteuer">–</span></div>
+    <div class="result-row"><span class="lbl">Instandhaltungsrücklage (1,5 % p.a.)</span><span class="v neg" id="c-ruecklage">–</span></div>
+    <div class="result-row total"><span class="lbl">Monatl. Gesamtbelastung Haus</span><span class="v" id="c-total">–</span></div>
+
+    <div class="info-box">
+      Instandhaltungsrücklage 1,5 % des Kaufpreises p.a. deckt Dachreparaturen, Heizung, Sanitär. Älteres Baujahr → eher 2 %. Grundsteuer basiert auf dem Pattenser Hebesatz (ca. 450 %).
+    </div>
+  </div>
+
+  <!-- ─── SECTION: SONDERTILGUNG ───────────────────────────────── -->
+  <div class="section-title">Sondertilgung – Ersparnis</div>
+
+  <div class="card">
+    <div class="card-title">Einsparung durch jährliche Sondertilgung</div>
+    <div class="two-col">
+      <div>
+        <div class="three-col" style="margin-bottom:14px">
+          <div class="highlight-box" style="margin-bottom:0">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Zinsersparnis</div>
+            <div style="font-size:20px;font-weight:800;color:var(--green)" id="st-ersparnis">–</div>
+          </div>
+          <div class="highlight-box" style="margin-bottom:0;border-color:rgba(108,141,250,.22);background:rgba(108,141,250,.06)">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Jahre kürzer</div>
+            <div style="font-size:20px;font-weight:800;color:var(--blue)" id="st-jahre">–</div>
+          </div>
+          <div class="highlight-box" style="margin-bottom:0">
+            <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Sondertilgung</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)" id="st-betrag">–</div>
+          </div>
+        </div>
+        <div class="result-row"><span class="lbl">Laufzeit ohne Sondertilgung</span><span class="v neg" id="st-lz-ohne">–</span></div>
+        <div class="result-row"><span class="lbl">Laufzeit mit Sondertilgung</span><span class="v pos" id="st-lz-mit">–</span></div>
+      </div>
+      <div>
+        <div class="result-row"><span class="lbl">Gesamtzinsen ohne Sondertilgung</span><span class="v neg" id="st-zins-ohne">–</span></div>
+        <div class="result-row"><span class="lbl">Gesamtzinsen mit Sondertilgung</span><span class="v pos" id="st-zins-mit">–</span></div>
+        <div class="result-row total"><span class="lbl">Ersparnis</span><span class="v" id="st-ersparnis2">–</span></div>
+        <div class="info-box" style="margin-top:10px">
+          Die meisten Annuitätendarlehen erlauben 5 % des Ursprungsdarlehens als Sondertilgung p.a. kostenlos. Slider oben → "Sondertilgung p.a."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION: TILGUNGSPLAN ────────────────────────────────── -->
+  <div class="section-title">Tilgungsplan</div>
+
+  <div class="card">
+    <div class="card-title">Schuldenabbau über die Zeit</div>
+    <div class="chart-wrap">
+      <canvas id="chart-tilgung"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Restschuld</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(251,146,60,.35);border:1px dashed var(--accent)"></div> Restschuld ohne Sondertilgung</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(74,222,128,.6)"></div> Tilgung kumuliert</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(248,113,113,.5)"></div> Zinsen kumuliert</div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION: WERTENTWICKLUNG ─────────────────────────────── -->
+  <div class="section-title">Wertentwicklung der Immobilie</div>
+
+  <div class="card">
+    <div class="card-title">Prognose Immobilienwert – Region Hannover / Pattensen</div>
+    <div class="scenario-row">
+      <span class="scenario-badge pess">Pessimistisch +0,5 % p.a.</span>
+      <span class="scenario-badge real">Realistisch +2,5 % p.a.</span>
+      <span class="scenario-badge opti">Optimistisch +4,5 % p.a.</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart-wert"></canvas>
+    </div>
+    <div class="two-col" style="margin-top:18px">
+      <div>
+        <div class="card-title" style="margin-bottom:10px">Immobilienwert nach 10 Jahren</div>
+        <div class="result-row"><span class="lbl" style="color:var(--red)">Pessimistisch (0,5 %)</span><span class="v" id="w10-p">–</span></div>
+        <div class="result-row"><span class="lbl" style="color:var(--blue)">Realistisch (2,5 %)</span><span class="v" id="w10-r">–</span></div>
+        <div class="result-row"><span class="lbl" style="color:var(--green)">Optimistisch (4,5 %)</span><span class="v" id="w10-o">–</span></div>
+      </div>
+      <div>
+        <div class="card-title" style="margin-bottom:10px">Netto-Eigenkapital nach 10 J.</div>
+        <div class="result-row"><span class="lbl" style="color:var(--red)">Pessimistisch</span><span class="v" id="eq10-p">–</span></div>
+        <div class="result-row"><span class="lbl" style="color:var(--blue)">Realistisch</span><span class="v blue" id="eq10-r">–</span></div>
+        <div class="result-row"><span class="lbl" style="color:var(--green)">Optimistisch</span><span class="v pos" id="eq10-o">–</span></div>
+      </div>
+    </div>
+    <div class="info-box">
+      Hannover-Region 2015–2022: bis zu +10 % p.a. in Boomjahren. Korrekturnach 2022 von ca. −5 bis −10 % (Zinswende). Langfristig (20+ Jahre) historischer Durchschnitt: 2–3 % p.a. nominal. Keine Anlageberatung.
+    </div>
+  </div>
+
+  <!-- ─── SECTION: AUTO-LEASING ────────────────────────────────── -->
+  <div class="section-title">Auto-Leasing</div>
+
+  <div class="card">
+    <div class="card-title">Fahrzeug-Finanzplanung</div>
+    <div class="two-col">
+      <div>
+        <div class="field">
+          <label>Monatliche Leasingrate <span class="val" id="l-lease">500 €</span></label>
+          <input type="range" id="lease-rate" min="150" max="1500" step="25" value="500" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Laufzeit <span class="val" id="l-lease-dauer">36 Monate</span></label>
+          <input type="range" id="lease-dauer" min="24" max="60" step="6" value="36" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Anzahlung / Sonderzahlung <span class="val" id="l-lease-an">0 €</span></label>
+          <input type="range" id="lease-anzahlung" min="0" max="25000" step="500" value="0" oninput="update()">
+        </div>
+        <div class="ins-cell" style="margin-top:12px">
+          <div class="ins-label">KFZ-Versicherung (Vollkasko)</div>
+          <input type="number" id="ins-kfz" value="85" min="0" oninput="update()">
+          <div class="ins-unit">€ / Monat</div>
+        </div>
+        <div class="ins-cell" style="margin-top:10px">
+          <div class="ins-label">Benzin / Strom + Wartung</div>
+          <input type="number" id="ins-fahrtkosten" value="150" min="0" oninput="update()">
+          <div class="ins-unit">€ / Monat (geschätzt)</div>
+        </div>
+      </div>
+      <div>
+        <div class="result-row"><span class="lbl">Monatliche Leasingrate</span><span class="v neg" id="la-rate">–</span></div>
+        <div class="result-row"><span class="lbl">KFZ-Versicherung</span><span class="v neg" id="la-kfz">–</span></div>
+        <div class="result-row"><span class="lbl">Benzin / Strom + Wartung</span><span class="v neg" id="la-fahrt">–</span></div>
+        <div class="result-row total"><span class="lbl">Auto gesamt / Monat</span><span class="v" id="la-total">–</span></div>
+        <div class="result-row" style="margin-top:6px"><span class="lbl">Gesamtkosten Leasingperiode</span><span class="v neg" id="la-gesamt">–</span></div>
+        <div class="result-row"><span class="lbl">davon Anzahlung</span><span class="v neg" id="la-anzahlung">–</span></div>
+        <div class="result-row"><span class="lbl">Gesamtaufwand inkl. Anzahlung</span><span class="v neg" id="la-alles">–</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SECTION: GESAMTBUDGET ────────────────────────────────── -->
+  <div class="section-title">Gesamtbudget</div>
+
+  <div class="card">
+    <div class="card-title">Vollständige monatliche Belastung – Haus + Auto</div>
+
+    <div class="result-row"><span class="lbl">Kreditrate Eigenheim</span><span class="v neg" id="b-kredit">–</span></div>
+    <div class="result-row"><span class="lbl">Versicherungen Haus</span><span class="v neg" id="b-vers-haus">–</span></div>
+    <div class="result-row"><span class="lbl">Grundsteuer</span><span class="v neg" id="b-grundsteuer">–</span></div>
+    <div class="result-row"><span class="lbl">Instandhaltungsrücklage</span><span class="v neg" id="b-ruecklage">–</span></div>
+    <div class="result-row"><span class="lbl">Auto (Leasing + Versicherung + Betrieb)</span><span class="v neg" id="b-auto">–</span></div>
+    <div class="result-row total"><span class="lbl">GESAMT</span><span class="v" id="b-total">–</span></div>
+
+    <div class="big-total">
+      <div class="number" id="b-big">–</div>
+      <div class="lbl">Monatliche Gesamtbelastung · Haus + Auto</div>
+    </div>
+  </div>
+
+</div><!-- .main -->
+
+<footer>byu-plan · Eigenheim-Rechner Schulenburg / Pattensen · fzudemx.github.io</footer>
+
+<script>
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const de = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
+const de1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function eur(n) { return de.format(Math.round(n)) + ' €'; }
+function pct(n) { return de1.format(n).replace('.', ',').replace(',', '.').replace(/\./g, '#').replace(/#/g, '.').replace(/(\d+),(\d+)/, '$1,$2') + ' %'; }
+
+// Simpler pct formatter
+function fmtPct(n) {
+  return n.toFixed(2).replace('.', ',') + ' %';
+}
+
+function fmtCompact(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + ' Mio. €';
+  if (n >= 1000)    return Math.round(n / 1000) + 'k €';
+  return Math.round(n) + ' €';
+}
+
+function set(id, val) { document.getElementById(id).textContent = val; }
+
+// ─── Amortization schedule ────────────────────────────────────────────────────
+function amortize(principal, annualRatePct, annualTilgungPct, sonderYearly) {
+  const monthlyPayment = principal * (annualRatePct / 100 + annualTilgungPct / 100) / 12;
+  const r = annualRatePct / 100 / 12;
+
+  let balance = principal;
+  const rows = [];
+  let cumInterest = 0, cumPrincipal = 0;
+
+  for (let year = 1; year <= 50; year++) {
+    let yi = 0, yp = 0;
+    for (let m = 0; m < 12; m++) {
+      if (balance <= 0) break;
+      const interest = balance * r;
+      let repay = monthlyPayment - interest;
+      if (repay < 0) repay = 0;
+      repay = Math.min(repay, balance);
+      yi += interest; yp += repay;
+      balance -= repay;
+    }
+    if (sonderYearly > 0 && balance > 0) {
+      const s = Math.min(sonderYearly, balance);
+      yp += s; balance -= s;
+    }
+    cumInterest += yi; cumPrincipal += yp;
+    rows.push({ year, balance: Math.max(0, balance), yi, yp, cumInterest, cumPrincipal });
+    if (balance <= 0) break;
+  }
+  return rows;
+}
+
+// ─── Main update ─────────────────────────────────────────────────────────────
+function update() {
+  // Inputs
+  const kp     = +document.getElementById('kaufpreis').value;
+  const ek     = +document.getElementById('eigenkapital').value;
+  const zins   = +document.getElementById('zins').value;
+  const tilg   = +document.getElementById('tilgung').value;
+  const sonder = +document.getElementById('sonder').value;
+
+  // Slider labels
+  set('l-kp',     eur(kp));
+  set('l-ek',     eur(ek));
+  set('l-zins',   fmtPct(zins));
+  set('l-tilg',   fmtPct(tilg));
+  set('l-sonder', eur(sonder));
+
+  // Nebenkosten
+  const grunderwerb = kp * 0.05;
+  const notar       = kp * 0.02;
+  const nebenkosten = grunderwerb + notar;
+  const darlehen    = Math.max(0, kp + nebenkosten - ek);
+  const ekQuote     = ek / (kp + nebenkosten);
+
+  // Monthly rate
+  const monthlyRate = darlehen * (zins / 100 + tilg / 100) / 12;
+
+  // Result column
+  set('r-kp',         eur(kp));
+  set('r-grunderwerb', eur(grunderwerb));
+  set('r-notar',       eur(notar));
+  set('r-ek',          '− ' + eur(ek));
+  set('r-darlehen',    eur(darlehen));
+  set('monthly-rate',  eur(monthlyRate));
+
+  // Equity badge
+  const badge = document.getElementById('equity-badge-wrap');
+  let bCls, bTxt;
+  if (ekQuote >= 0.20) { bCls = 'good'; bTxt = `✓ Eigenkapitalquote ${Math.round(ekQuote*100)} % – sehr gut`; }
+  else if (ekQuote >= 0.10) { bCls = 'warn'; bTxt = `⚠ Eigenkapitalquote ${Math.round(ekQuote*100)} % – unter Empfehlung (20 %)`; }
+  else { bCls = 'bad';  bTxt = `✕ Eigenkapitalquote ${Math.round(ekQuote*100)} % – zu niedrig`; }
+  badge.innerHTML = `<div class="equity-badge ${bCls}">${bTxt}</div>`;
+
+  // Amortization
+  const schedMit  = amortize(darlehen, zins, tilg, sonder);
+  const schedOhne = amortize(darlehen, zins, tilg, 0);
+  const y10       = schedMit.find(s => s.year === 10) || schedMit[schedMit.length - 1];
+
+  set('r-restschuld', eur(y10.balance));
+  set('r-zinsen10',   eur(y10.cumInterest));
+  set('r-laufzeit',   schedMit.length + ' Jahre');
+
+  // Insurance
+  const insGeb  = +(document.getElementById('ins-gebaeude').value)    || 0;
+  const insHaus = +(document.getElementById('ins-hausrat').value)      || 0;
+  const insRlv  = +(document.getElementById('ins-rlv').value)          || 0;
+  const insGrst = +(document.getElementById('ins-grundsteuer').value)  || 0;
+  const rueckl  = kp * 0.015 / 12;
+  const versSum = insGeb + insHaus + insRlv + insGrst;
+  const hausTotal = monthlyRate + versSum + rueckl;
+
+  set('c-kredit',     eur(monthlyRate));
+  set('c-gebaeude',   eur(insGeb));
+  set('c-hausrat',    eur(insHaus));
+  set('c-rlv',        eur(insRlv));
+  set('c-grundsteuer',eur(insGrst));
+  set('c-ruecklage',  eur(rueckl));
+  set('c-total',      eur(hausTotal));
+
+  // Sondertilgung comparison
+  const zinsenOhne = schedOhne.reduce((s, r) => s + r.yi, 0);
+  const zinsenMit  = schedMit.reduce((s, r) => s + r.yi, 0);
+  const ersparnis  = zinsenOhne - zinsenMit;
+  const jahreSaved = schedOhne.length - schedMit.length;
+
+  set('st-betrag',    eur(sonder));
+  set('st-ersparnis', eur(ersparnis));
+  set('st-ersparnis2',eur(ersparnis));
+  set('st-jahre',     jahreSaved + ' Jahre');
+  set('st-lz-ohne',   schedOhne.length + ' Jahre');
+  set('st-lz-mit',    schedMit.length  + ' Jahre');
+  set('st-zins-ohne', eur(zinsenOhne));
+  set('st-zins-mit',  eur(zinsenMit));
+
+  // Wertentwicklung
+  const rates = [0.005, 0.025, 0.045];
+  const w10   = rates.map(r => kp * Math.pow(1 + r, 10));
+  const eq10  = w10.map(w => w - y10.balance);
+
+  set('w10-p', eur(w10[0])); set('w10-r', eur(w10[1])); set('w10-o', eur(w10[2]));
+  ['p','r','o'].forEach((k,i) => {
+    const el = document.getElementById('eq10-' + k);
+    el.textContent = eur(eq10[i]);
+    el.className = 'v ' + (eq10[i] >= 0 ? (k === 'o' ? 'pos' : 'blue') : 'neg');
+  });
+
+  // Leasing
+  const leaseRate  = +document.getElementById('lease-rate').value;
+  const leaseDauer = +document.getElementById('lease-dauer').value;
+  const leaseAn    = +document.getElementById('lease-anzahlung').value;
+  const kfzVers    = +(document.getElementById('ins-kfz').value)          || 0;
+  const fahrt      = +(document.getElementById('ins-fahrtkosten').value)   || 0;
+
+  set('l-lease',      eur(leaseRate));
+  set('l-lease-dauer', leaseDauer + ' Monate');
+  set('l-lease-an',    eur(leaseAn));
+
+  const autoMonat  = leaseRate + kfzVers + fahrt;
+  const leaseTotal = leaseRate * leaseDauer;
+
+  set('la-rate',     eur(leaseRate));
+  set('la-kfz',      eur(kfzVers));
+  set('la-fahrt',    eur(fahrt));
+  set('la-total',    eur(autoMonat));
+  set('la-gesamt',   eur(leaseTotal));
+  set('la-anzahlung',eur(leaseAn));
+  set('la-alles',    eur(leaseTotal + leaseAn));
+
+  // Budget total
+  const total = hausTotal + autoMonat;
+
+  set('b-kredit',     eur(monthlyRate));
+  set('b-vers-haus',  eur(versSum));
+  set('b-grundsteuer',eur(insGrst));
+  set('b-ruecklage',  eur(rueckl));
+  set('b-auto',       eur(autoMonat));
+  set('b-total',      eur(total));
+  set('b-big',        eur(total));
+
+  // Sticky bar
+  set('s-total',  eur(total));
+  set('s-kredit', eur(monthlyRate));
+  set('s-nk',     eur(versSum + rueckl));
+  set('s-auto',   eur(autoMonat));
+
+  // Charts
+  drawTilgung(schedMit, schedOhne, darlehen);
+  drawWert(kp);
+}
+
+// ─── Canvas: Tilgungsplan ─────────────────────────────────────────────────────
+function drawTilgung(schedMit, schedOhne, darlehen) {
+  const canvas = document.getElementById('chart-tilgung');
+  const W = canvas.parentElement.clientWidth - 8;
+  const H = 240;
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const pad = { top: 24, right: 16, bottom: 36, left: 68 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#22222e';
+  ctx.fillRect(0, 0, W, H);
+
+  const maxYears = Math.max(schedOhne.length + 1, 30);
+  const maxVal   = darlehen * 1.05;
+
+  function cx(yr)  { return pad.left + (yr / maxYears) * cw; }
+  function cy(val) { return pad.top + ch - (val / maxVal) * ch; }
+
+  // Grid
+  ctx.strokeStyle = '#2e2e3d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const yy = pad.top + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(pad.left + cw, yy); ctx.stroke();
+    ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(fmtCompact(maxVal * (1 - i / 4)), pad.left - 6, yy + 4);
+  }
+  for (let yr = 5; yr <= maxYears; yr += 5) {
+    const xx = cx(yr);
+    ctx.strokeStyle = '#2e2e3d'; ctx.beginPath(); ctx.moveTo(xx, pad.top); ctx.lineTo(xx, pad.top + ch); ctx.stroke();
+    ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(yr + 'J', xx, H - pad.bottom + 16);
+  }
+
+  // 10-year marker
+  ctx.strokeStyle = 'rgba(251,146,60,.5)';
+  ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx(10), pad.top); ctx.lineTo(cx(10), pad.top + ch); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(251,146,60,.9)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('10J', cx(10), pad.top - 8);
+
+  // Cumulative interest (red)
+  ctx.strokeStyle = 'rgba(248,113,113,.65)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx(0), cy(0));
+  for (const s of schedOhne) ctx.lineTo(cx(s.year), cy(Math.min(s.cumInterest, maxVal)));
+  ctx.stroke();
+
+  // Cumulative principal (green)
+  ctx.strokeStyle = 'rgba(74,222,128,.75)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx(0), cy(0));
+  for (const s of schedOhne) ctx.lineTo(cx(s.year), cy(Math.min(s.cumPrincipal, maxVal)));
+  ctx.stroke();
+
+  // Balance without sonder (dashed orange)
+  if (schedOhne.length > 0) {
+    ctx.strokeStyle = 'rgba(251,146,60,.35)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(cx(0), cy(darlehen));
+    for (const s of schedOhne) { ctx.lineTo(cx(s.year), cy(s.balance)); if (s.balance <= 0) break; }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Balance with sonder (solid orange)
+  ctx.strokeStyle = '#fb923c'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(cx(0), cy(darlehen));
+  for (const s of schedMit) { ctx.lineTo(cx(s.year), cy(s.balance)); if (s.balance <= 0) break; }
+  ctx.stroke();
+
+  // Start dot
+  ctx.fillStyle = '#fb923c';
+  ctx.beginPath(); ctx.arc(cx(0), cy(darlehen), 4, 0, Math.PI * 2); ctx.fill();
+}
+
+// ─── Canvas: Wertentwicklung ──────────────────────────────────────────────────
+function drawWert(kp) {
+  const canvas = document.getElementById('chart-wert');
+  const W = canvas.parentElement.clientWidth - 8;
+  const H = 240;
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const pad = { top: 24, right: 16, bottom: 36, left: 82 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#22222e';
+  ctx.fillRect(0, 0, W, H);
+
+  const YEARS  = 30;
+  const rates  = [0.005, 0.025, 0.045];
+  const colors = ['#f87171', '#6c8dfa', '#4ade80'];
+  const maxVal = kp * Math.pow(1.045, YEARS) * 1.05;
+
+  function cx(yr)  { return pad.left + (yr / YEARS) * cw; }
+  function cy(val) { return pad.top + ch - (val / maxVal) * ch; }
+
+  // Grid
+  ctx.strokeStyle = '#2e2e3d'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const yy = pad.top + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(pad.left + cw, yy); ctx.stroke();
+    ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(fmtCompact(maxVal * (1 - i / 4)), pad.left - 6, yy + 4);
+  }
+  for (let yr = 5; yr <= YEARS; yr += 5) {
+    const xx = cx(yr);
+    ctx.strokeStyle = '#2e2e3d'; ctx.beginPath(); ctx.moveTo(xx, pad.top); ctx.lineTo(xx, pad.top + ch); ctx.stroke();
+    ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(yr + 'J', xx, H - pad.bottom + 16);
+  }
+
+  // 10-year marker
+  ctx.strokeStyle = 'rgba(251,146,60,.4)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx(10), pad.top); ctx.lineTo(cx(10), pad.top + ch); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(251,146,60,.8)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('10J', cx(10), pad.top - 8);
+
+  // Value lines
+  for (let si = 0; si < rates.length; si++) {
+    ctx.strokeStyle = colors[si]; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(cx(0), cy(kp));
+    for (let yr = 1; yr <= YEARS; yr++) ctx.lineTo(cx(yr), cy(kp * Math.pow(1 + rates[si], yr)));
+    ctx.stroke();
+  }
+
+  // Purchase price label
+  ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(fmtCompact(kp), cx(0) + 6, cy(kp) - 6);
+  ctx.fillStyle = '#e8e8f0';
+  ctx.beginPath(); ctx.arc(cx(0), cy(kp), 4, 0, Math.PI * 2); ctx.fill();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+update();
+window.addEventListener('resize', update);
+</script>
+</body>
+</html>

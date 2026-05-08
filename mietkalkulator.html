@@ -198,11 +198,19 @@
       color: var(--text2); font-size: 11px;
       border-top: 1px solid var(--border); margin-top: 28px;
     }
+    .back-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text2);
+      text-decoration: none; margin-bottom: 10px;
+      transition: color .15s;
+    }
+    .back-nav:hover { color: var(--accent); }
   </style>
 </head>
 <body>
 
 <header>
+  <a class="back-nav" href="/byu-plan/">← Dashboard</a>
   <h1>🏠 Immobilien-Renditerechner</h1>
   <p>Cashflow- &amp; Steueranalyse für Kaufimmobilien zur Vermietung · Region Hannover / Hildesheim / Göttingen · Stand 2025/2026</p>
 </header>
@@ -442,13 +450,16 @@
           <span class="rlabel"><strong>Steuerliches Ergebnis</strong></span>
           <span class="rval2" id="r_ergebnis">–</span>
         </div>
+
         <div class="divider"></div>
+
         <div class="pblock">
           <h4>Partner 1</h4>
           <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Eigentumsanteil &amp; Grenzsteuersatz (inkl. Soli)</span><span class="rval2 a" id="r_p1_satz">–</span></div>
           <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis jährlich</span><span class="rval2 g" id="r_p1_j">–</span></div>
           <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Steuerersparnis monatlich</span><span class="rval2 g" id="r_p1_m">–</span></div>
         </div>
+
         <div class="pblock">
           <h4>Partner 2</h4>
           <div class="rrow" style="border:none;padding:4px 0"><span class="rlabel">Eigentumsanteil &amp; Grenzsteuersatz</span><span class="rval2 a" id="r_p2_satz">–</span></div>
@@ -562,8 +573,8 @@
     const nk      = gst + notar + grndB + prov;
     const darl    = Math.max(0, kaufpreis + nk - eigenkapit);
 
-    const i_m      = zins / 12;
-    const rate     = darl * (zins + tilgung) / 12;
+    const i_m   = zins / 12;
+    const rate  = darl * (zins + tilgung) / 12;
     const zinsenM1 = darl * i_m;
     const tilgM1   = rate - zinsenM1;
 
@@ -574,10 +585,10 @@
     const afaJahr  = kaufpreis * gbanteil * afaSatz;
     const afaMonat = afaJahr / 12;
 
-    const zinsenJahr = darl * zins;
-    const hgJahr     = hausgeld * 12;
-    const werbung    = afaJahr + zinsenJahr + hgJahr;
-    const steuerErg  = miete_jahr - werbung;
+    const zinsenJahr  = darl * zins;
+    const hgJahr      = hausgeld * 12;
+    const werbung     = afaJahr + zinsenJahr + hgJahr;
+    const steuerErg   = miete_jahr - werbung;
 
     const gstP1 = grenzsteuersatz(einP1);
     const gstP2 = grenzsteuersatz(einP2);
@@ -596,14 +607,14 @@
     } else {
       rest10 = Math.max(0, darl - tilgM1 * 120);
     }
-    const tilg10    = darl - rest10;
-    const erspGes10 = (erspP1Jahr + erspP2Jahr) * 10;
-    const cf10      = cf * 120;
+    const tilg10        = darl - rest10;
+    const erspGes10     = (erspP1Jahr + erspP2Jahr) * 10;
+    const cf10          = cf * 120;
     const eigenZahlung10 = Math.max(0, -cf) * 120;
 
     const bruttoRendite = kaufpreis > 0 ? (miete_brutto * 12) / kaufpreis * 100 : 0;
     const nettoRendite  = (kaufpreis + nk) > 0 ? (miete_jahr - hgJahr) / (kaufpreis + nk) * 100 : 0;
-    const kaufFaktor    = miete_jahr > 0 ? kaufpreis / miete_jahr : 0;
+    const kaufFaktor    = miete_brutto > 0 ? kaufpreis / (miete_brutto * 12) : 0;
 
     const banner = el('cf_banner');
     banner.className = 'cf-banner ' + (cf >= 0 ? 'green' : cf >= -200 ? 'yellow' : 'red');
@@ -616,14 +627,14 @@
       el('cf_desc').textContent = 'Du zahlst ' + fmt(Math.abs(cf)) + '/Monat selbst dazu. Kaufpreis senken, Miete prüfen oder Tilgung reduzieren.';
     }
 
-    el('kz_brutto').textContent   = fmtPct(bruttoRendite);
-    el('kz_netto').textContent    = fmtPct(nettoRendite);
-    el('kz_faktor').textContent   = fmtX(kaufFaktor);
+    el('kz_brutto').textContent  = fmtPct(bruttoRendite);
+    el('kz_netto').textContent   = fmtPct(nettoRendite);
+    el('kz_faktor').textContent  = fmtX(kaufFaktor);
     el('kz_darlehen').textContent = fmt(darl);
 
-    el('b_miete').textContent    = '+' + fmt(miete_netto);
-    el('b_rate').textContent     = '−' + fmt(rate);
-    el('b_hausgeld').textContent = '−' + fmt(hausgeld);
+    el('b_miete').textContent   = '+' + fmt(miete_netto);
+    el('b_rate').textContent    = '−' + fmt(rate);
+    el('b_hausgeld').textContent= '−' + fmt(hausgeld);
 
     function setBline(rowId, valId, val) {
       const row = el(rowId);
@@ -638,10 +649,10 @@
     bsumEl.textContent = (cf >= 0 ? '+' : '') + fmt(cf);
     bsumEl.style.color = cf >= 0 ? 'var(--green)' : cf >= -200 ? 'var(--yellow)' : 'var(--red)';
 
-    el('r_kp').textContent     = fmt(kaufpreis);
-    el('r_gst').textContent    = fmt(gst);
-    el('r_notar').textContent  = fmt(notar);
-    el('r_gb').textContent     = fmt(grndB);
+    el('r_kp').textContent    = fmt(kaufpreis);
+    el('r_gst').textContent   = fmt(gst);
+    el('r_notar').textContent = fmt(notar);
+    el('r_gb').textContent    = fmt(grndB);
     const provRow = el('r_prov_row');
     if (mitProvision) {
       provRow.style.display = 'flex';
@@ -649,17 +660,17 @@
     } else {
       provRow.style.display = 'none';
     }
-    el('r_nk').textContent       = fmt(nk);
-    el('r_ek').textContent       = fmt(eigenkapit);
-    el('r_darl').textContent     = fmt(darl);
-    el('r_rate').textContent     = fmt(rate) + ' / Monat';
+    el('r_nk').textContent     = fmt(nk);
+    el('r_ek').textContent     = fmt(eigenkapit);
+    el('r_darl').textContent   = fmt(darl);
+    el('r_rate').textContent   = fmt(rate) + ' / Monat';
     el('r_zinsen_m').textContent = fmt(zinsenM1) + ' / Monat';
     el('r_tilg_m').textContent   = fmt(tilgM1) + ' / Monat';
 
-    el('r_miete_j').textContent  = fmt(miete_jahr) + ' / Jahr';
-    el('r_afa').textContent      = fmt(afaJahr) + ' / Jahr  (' + fmt(afaMonat) + ' / Monat)';
-    el('r_zinsen_j').textContent = fmt(zinsenJahr) + ' / Jahr';
-    el('r_hg_j').textContent     = fmt(hgJahr) + ' / Jahr';
+    el('r_miete_j').textContent = fmt(miete_jahr) + ' / Jahr';
+    el('r_afa').textContent     = fmt(afaJahr) + ' / Jahr  (' + fmt(afaMonat) + ' / Monat)';
+    el('r_zinsen_j').textContent= fmt(zinsenJahr) + ' / Jahr';
+    el('r_hg_j').textContent    = fmt(hgJahr) + ' / Jahr';
 
     const ergEl = el('r_ergebnis');
     if (steuerErg <= 0) {
@@ -682,8 +693,8 @@
     el('r_p2_satz').textContent = fmtPct(anteilP2 * 100, 0) + ' Anteil · ' + fmtPct(gstP2 * 100) + ' Grenzsteuersatz';
     setSteuerVal('r_p2_j','r_p2_m', erspP2Jahr, erspP2M);
 
-    el('r_rest10').textContent = fmt(rest10);
-    el('r_tilg10').textContent = '+' + fmt(tilg10);
+    el('r_rest10').textContent   = fmt(rest10);
+    el('r_tilg10').textContent   = '+' + fmt(tilg10);
     const s10El = el('r_steuer10');
     s10El.textContent = (erspGes10 >= 0 ? '+' : '') + fmt(erspGes10);
     s10El.className   = 'rval2 ' + (erspGes10 >= 0 ? 'g' : 'r');
