@@ -236,7 +236,7 @@
 
 <div class="main">
 
-  <!-- ─── SECTION: FINANZIERUNG ──────────────────────────────── -->
+  <!-- ─── SECTION: FINANZIERUNG ──────────────────────────── -->
   <div class="section-title">Finanzierung</div>
 
   <div class="card">
@@ -294,7 +294,7 @@
     </div>
   </div>
 
-  <!-- ─── SECTION: MONATLICHE KOSTEN ───────────────────────────── -->
+  <!-- ─── SECTION: MONATLICHE KOSTEN ───────────────────── -->
   <div class="section-title">Monatliche Gesamtkosten</div>
 
   <div class="card">
@@ -312,13 +312,8 @@
         <div class="ins-unit">€ / Monat</div>
       </div>
       <div class="ins-cell">
-        <div class="ins-label">Risikolebensversicherung</div>
-        <input type="number" id="ins-rlv" value="70" min="0" oninput="update()">
-        <div class="ins-unit">€ / Monat</div>
-      </div>
-      <div class="ins-cell">
         <div class="ins-label">Grundsteuer (Pattensen)</div>
-        <input type="number" id="ins-grundsteuer" value="130" min="0" oninput="update()">
+        <input type="number" id="ins-grundsteuer" value="100" min="0" oninput="update()">
         <div class="ins-unit">€ / Monat</div>
       </div>
     </div>
@@ -326,17 +321,16 @@
     <div class="result-row"><span class="lbl">Kreditrate (Zins + Tilgung)</span><span class="v neg" id="c-kredit">–</span></div>
     <div class="result-row"><span class="lbl">Wohngebäudeversicherung</span><span class="v neg" id="c-gebaeude">–</span></div>
     <div class="result-row"><span class="lbl">Hausratversicherung</span><span class="v neg" id="c-hausrat">–</span></div>
-    <div class="result-row"><span class="lbl">Risikolebensversicherung</span><span class="v neg" id="c-rlv">–</span></div>
     <div class="result-row"><span class="lbl">Grundsteuer</span><span class="v neg" id="c-grundsteuer">–</span></div>
-    <div class="result-row"><span class="lbl">Instandhaltungsrücklage (1,5 % p.a.)</span><span class="v neg" id="c-ruecklage">–</span></div>
+    <div class="result-row"><span class="lbl">Instandhaltungsrücklage (0,5 % p.a. · Neubau)</span><span class="v neg" id="c-ruecklage">–</span></div>
     <div class="result-row total"><span class="lbl">Monatl. Gesamtbelastung Haus</span><span class="v" id="c-total">–</span></div>
 
     <div class="info-box">
-      Instandhaltungsrücklage 1,5 % des Kaufpreises p.a. deckt Dachreparaturen, Heizung, Sanitär. Älteres Baujahr → eher 2 %. Grundsteuer basiert auf dem Pattenser Hebesatz (ca. 450 %).
+      Instandhaltungsrücklage Neubau: 0,5 % p.a. reicht in den ersten Jahren. Ab ~10 Jahren empfehlen sich 1–1,5 %. Grundsteuer: Schätzung für Pattensen nach der Grundsteuerreform 2025 – der genaue Betrag steht im Grundsteuerbescheid.
     </div>
   </div>
 
-  <!-- ─── SECTION: SONDERTILGUNG ───────────────────────────────── -->
+  <!-- ─── SECTION: SONDERTILGUNG ───────────────────────── -->
   <div class="section-title">Sondertilgung – Ersparnis</div>
 
   <div class="card">
@@ -365,13 +359,13 @@
         <div class="result-row"><span class="lbl">Gesamtzinsen mit Sondertilgung</span><span class="v pos" id="st-zins-mit">–</span></div>
         <div class="result-row total"><span class="lbl">Ersparnis</span><span class="v" id="st-ersparnis2">–</span></div>
         <div class="info-box" style="margin-top:10px">
-          Die meisten Annuitätendarlehen erlauben 5 % des Ursprungsdarlehens als Sondertilgung p.a. kostenlos. Slider oben → "Sondertilgung p.a."
+          Die meisten Annuitätendarlehen erlauben 5 % des Ursprungsdarlehens als Sondertilgung p.a. kostenlos. Slider oben → „Sondertilgung p.a.“
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ─── SECTION: TILGUNGSPLAN ────────────────────────────────── -->
+  <!-- ─── SECTION: TILGUNGSPLAN ──────────────────────────── -->
   <div class="section-title">Tilgungsplan</div>
 
   <div class="card">
@@ -387,7 +381,7 @@
     </div>
   </div>
 
-  <!-- ─── SECTION: WERTENTWICKLUNG ─────────────────────────────── -->
+  <!-- ─── SECTION: WERTENTWICKLUNG ───────────────────────── -->
   <div class="section-title">Wertentwicklung der Immobilie</div>
 
   <div class="card">
@@ -419,7 +413,7 @@
     </div>
   </div>
 
-  <!-- ─── SECTION: AUTO-LEASING ────────────────────────────────── -->
+  <!-- ─── SECTION: AUTO-LEASING ──────────────────────────── -->
   <div class="section-title">Auto-Leasing</div>
 
   <div class="card">
@@ -461,14 +455,14 @@
     </div>
   </div>
 
-  <!-- ─── SECTION: GESAMTBUDGET ────────────────────────────────── -->
+  <!-- ─── SECTION: GESAMTBUDGET ──────────────────────────── -->
   <div class="section-title">Gesamtbudget</div>
 
   <div class="card">
     <div class="card-title">Vollständige monatliche Belastung – Haus + Auto</div>
 
     <div class="result-row"><span class="lbl">Kreditrate Eigenheim</span><span class="v neg" id="b-kredit">–</span></div>
-    <div class="result-row"><span class="lbl">Versicherungen Haus</span><span class="v neg" id="b-vers-haus">–</span></div>
+    <div class="result-row"><span class="lbl">Versicherungen Haus (Gebäude + Hausrat)</span><span class="v neg" id="b-vers-haus">–</span></div>
     <div class="result-row"><span class="lbl">Grundsteuer</span><span class="v neg" id="b-grundsteuer">–</span></div>
     <div class="result-row"><span class="lbl">Instandhaltungsrücklage</span><span class="v neg" id="b-ruecklage">–</span></div>
     <div class="result-row"><span class="lbl">Auto (Leasing + Versicherung + Betrieb)</span><span class="v neg" id="b-auto">–</span></div>
@@ -485,27 +479,22 @@
 <footer>byu-plan · Eigenheim-Rechner Schulenburg / Pattensen · fzudemx.github.io</footer>
 
 <script>
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────────────────────
 const de = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
 const de1 = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function eur(n) { return de.format(Math.round(n)) + ' €'; }
-function pct(n) { return de1.format(n).replace('.', ',').replace(',', '.').replace(/\./g, '#').replace(/#/g, '.').replace(/(\d+),(\d+)/, '$1,$2') + ' %'; }
-
-// Simpler pct formatter
-function fmtPct(n) {
-  return n.toFixed(2).replace('.', ',') + ' %';
-}
+function fmtPct(n) { return n.toFixed(2).replace('.', ',') + ' %'; }
 
 function fmtCompact(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + ' Mio. €';
-  if (n >= 1000)    return Math.round(n / 1000) + 'k €';
-  return Math.round(n) + ' €';
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + ' Mio. €';
+  if (n >= 1000)    return Math.round(n / 1000) + 'k €';
+  return Math.round(n) + ' €';
 }
 
 function set(id, val) { document.getElementById(id).textContent = val; }
 
-// ─── Amortization schedule ────────────────────────────────────────────────────
+// ─── Amortization schedule ────────────────────────────────────────────────────────────────────────────────
 function amortize(principal, annualRatePct, annualTilgungPct, sonderYearly) {
   const monthlyPayment = principal * (annualRatePct / 100 + annualTilgungPct / 100) / 12;
   const r = annualRatePct / 100 / 12;
@@ -536,90 +525,78 @@ function amortize(principal, annualRatePct, annualTilgungPct, sonderYearly) {
   return rows;
 }
 
-// ─── Main update ─────────────────────────────────────────────────────────────
+// ─── Main update ─────────────────────────────────────────────────────────────────────────────
 function update() {
-  // Inputs
   const kp     = +document.getElementById('kaufpreis').value;
   const ek     = +document.getElementById('eigenkapital').value;
   const zins   = +document.getElementById('zins').value;
   const tilg   = +document.getElementById('tilgung').value;
   const sonder = +document.getElementById('sonder').value;
 
-  // Slider labels
   set('l-kp',     eur(kp));
   set('l-ek',     eur(ek));
   set('l-zins',   fmtPct(zins));
   set('l-tilg',   fmtPct(tilg));
   set('l-sonder', eur(sonder));
 
-  // Nebenkosten
   const grunderwerb = kp * 0.05;
   const notar       = kp * 0.02;
   const nebenkosten = grunderwerb + notar;
   const darlehen    = Math.max(0, kp + nebenkosten - ek);
   const ekQuote     = ek / (kp + nebenkosten);
 
-  // Monthly rate
   const monthlyRate = darlehen * (zins / 100 + tilg / 100) / 12;
 
-  // Result column
-  set('r-kp',         eur(kp));
+  set('r-kp',          eur(kp));
   set('r-grunderwerb', eur(grunderwerb));
   set('r-notar',       eur(notar));
-  set('r-ek',          '− ' + eur(ek));
+  set('r-ek',          '− ' + eur(ek));
   set('r-darlehen',    eur(darlehen));
   set('monthly-rate',  eur(monthlyRate));
 
-  // Equity badge
   const badge = document.getElementById('equity-badge-wrap');
   let bCls, bTxt;
-  if (ekQuote >= 0.20) { bCls = 'good'; bTxt = `✓ Eigenkapitalquote ${Math.round(ekQuote*100)} % – sehr gut`; }
-  else if (ekQuote >= 0.10) { bCls = 'warn'; bTxt = `⚠ Eigenkapitalquote ${Math.round(ekQuote*100)} % – unter Empfehlung (20 %)`; }
-  else { bCls = 'bad';  bTxt = `✕ Eigenkapitalquote ${Math.round(ekQuote*100)} % – zu niedrig`; }
+  if (ekQuote >= 0.20) { bCls = 'good'; bTxt = `✓ Eigenkapitalquote ${Math.round(ekQuote*100)} % – sehr gut`; }
+  else if (ekQuote >= 0.10) { bCls = 'warn'; bTxt = `⚠ Eigenkapitalquote ${Math.round(ekQuote*100)} % – unter Empfehlung (20 %)`; }
+  else { bCls = 'bad';  bTxt = `✕ Eigenkapitalquote ${Math.round(ekQuote*100)} % – zu niedrig`; }
   badge.innerHTML = `<div class="equity-badge ${bCls}">${bTxt}</div>`;
 
-  // Amortization
   const schedMit  = amortize(darlehen, zins, tilg, sonder);
   const schedOhne = amortize(darlehen, zins, tilg, 0);
   const y10       = schedMit.find(s => s.year === 10) || schedMit[schedMit.length - 1];
 
   set('r-restschuld', eur(y10.balance));
   set('r-zinsen10',   eur(y10.cumInterest));
-  set('r-laufzeit',   schedMit.length + ' Jahre');
+  set('r-laufzeit',   schedMit.length + ' Jahre');
 
-  // Insurance
   const insGeb  = +(document.getElementById('ins-gebaeude').value)    || 0;
   const insHaus = +(document.getElementById('ins-hausrat').value)      || 0;
-  const insRlv  = +(document.getElementById('ins-rlv').value)          || 0;
   const insGrst = +(document.getElementById('ins-grundsteuer').value)  || 0;
-  const rueckl  = kp * 0.015 / 12;
-  const versSum = insGeb + insHaus + insRlv + insGrst;
+  const rueckl  = kp * 0.005 / 12;
+  const versSum = insGeb + insHaus + insGrst;
   const hausTotal = monthlyRate + versSum + rueckl;
 
-  set('c-kredit',     eur(monthlyRate));
-  set('c-gebaeude',   eur(insGeb));
-  set('c-hausrat',    eur(insHaus));
-  set('c-rlv',        eur(insRlv));
-  set('c-grundsteuer',eur(insGrst));
-  set('c-ruecklage',  eur(rueckl));
-  set('c-total',      eur(hausTotal));
+  set('c-kredit',      eur(monthlyRate));
+  set('c-gebaeude',    eur(insGeb));
+  set('c-hausrat',     eur(insHaus));
+  set('c-grundsteuer', eur(insGrst));
+  set('c-ruecklage',   eur(rueckl));
+  set('c-total',       eur(hausTotal));
 
-  // Sondertilgung comparison
   const zinsenOhne = schedOhne.reduce((s, r) => s + r.yi, 0);
   const zinsenMit  = schedMit.reduce((s, r) => s + r.yi, 0);
   const ersparnis  = zinsenOhne - zinsenMit;
   const jahreSaved = schedOhne.length - schedMit.length;
 
-  set('st-betrag',    eur(sonder));
-  set('st-ersparnis', eur(ersparnis));
-  set('st-ersparnis2',eur(ersparnis));
-  set('st-jahre',     jahreSaved + ' Jahre');
-  set('st-lz-ohne',   schedOhne.length + ' Jahre');
-  set('st-lz-mit',    schedMit.length  + ' Jahre');
-  set('st-zins-ohne', eur(zinsenOhne));
-  set('st-zins-mit',  eur(zinsenMit));
+  set('st-betrag',     eur(sonder));
+  set('st-ersparnis',  eur(ersparnis));
+  set('st-ersparnis2', eur(ersparnis));
+  set('st-jahre',      jahreSaved + ' Jahre');
+  set('st-lz-ohne',    schedOhne.length + ' Jahre');
+  set('st-lz-mit',     schedMit.length  + ' Jahre');
+  set('st-zins-ohne',  eur(zinsenOhne));
+  set('st-zins-mit',   eur(zinsenMit));
 
-  // Wertentwicklung
   const rates = [0.005, 0.025, 0.045];
   const w10   = rates.map(r => kp * Math.pow(1 + r, 10));
   const eq10  = w10.map(w => w - y10.balance);
@@ -631,51 +608,47 @@ function update() {
     el.className = 'v ' + (eq10[i] >= 0 ? (k === 'o' ? 'pos' : 'blue') : 'neg');
   });
 
-  // Leasing
   const leaseRate  = +document.getElementById('lease-rate').value;
   const leaseDauer = +document.getElementById('lease-dauer').value;
   const leaseAn    = +document.getElementById('lease-anzahlung').value;
-  const kfzVers    = +(document.getElementById('ins-kfz').value)          || 0;
-  const fahrt      = +(document.getElementById('ins-fahrtkosten').value)   || 0;
+  const kfzVers    = +(document.getElementById('ins-kfz').value)        || 0;
+  const fahrt      = +(document.getElementById('ins-fahrtkosten').value) || 0;
 
-  set('l-lease',      eur(leaseRate));
-  set('l-lease-dauer', leaseDauer + ' Monate');
+  set('l-lease',       eur(leaseRate));
+  set('l-lease-dauer', leaseDauer + ' Monate');
   set('l-lease-an',    eur(leaseAn));
 
   const autoMonat  = leaseRate + kfzVers + fahrt;
   const leaseTotal = leaseRate * leaseDauer;
 
-  set('la-rate',     eur(leaseRate));
-  set('la-kfz',      eur(kfzVers));
-  set('la-fahrt',    eur(fahrt));
-  set('la-total',    eur(autoMonat));
-  set('la-gesamt',   eur(leaseTotal));
-  set('la-anzahlung',eur(leaseAn));
-  set('la-alles',    eur(leaseTotal + leaseAn));
+  set('la-rate',      eur(leaseRate));
+  set('la-kfz',       eur(kfzVers));
+  set('la-fahrt',     eur(fahrt));
+  set('la-total',     eur(autoMonat));
+  set('la-gesamt',    eur(leaseTotal));
+  set('la-anzahlung', eur(leaseAn));
+  set('la-alles',     eur(leaseTotal + leaseAn));
 
-  // Budget total
   const total = hausTotal + autoMonat;
 
-  set('b-kredit',     eur(monthlyRate));
-  set('b-vers-haus',  eur(versSum));
-  set('b-grundsteuer',eur(insGrst));
-  set('b-ruecklage',  eur(rueckl));
-  set('b-auto',       eur(autoMonat));
-  set('b-total',      eur(total));
-  set('b-big',        eur(total));
+  set('b-kredit',      eur(monthlyRate));
+  set('b-vers-haus',   eur(versSum));
+  set('b-grundsteuer', eur(insGrst));
+  set('b-ruecklage',   eur(rueckl));
+  set('b-auto',        eur(autoMonat));
+  set('b-total',       eur(total));
+  set('b-big',         eur(total));
 
-  // Sticky bar
   set('s-total',  eur(total));
   set('s-kredit', eur(monthlyRate));
   set('s-nk',     eur(versSum + rueckl));
   set('s-auto',   eur(autoMonat));
 
-  // Charts
   drawTilgung(schedMit, schedOhne, darlehen);
   drawWert(kp);
 }
 
-// ─── Canvas: Tilgungsplan ─────────────────────────────────────────────────────
+// ─── Canvas: Tilgungsplan ─────────────────────────────────────────────────────────────────────────────────
 function drawTilgung(schedMit, schedOhne, darlehen) {
   const canvas = document.getElementById('chart-tilgung');
   const W = canvas.parentElement.clientWidth - 8;
@@ -698,7 +671,6 @@ function drawTilgung(schedMit, schedOhne, darlehen) {
   function cx(yr)  { return pad.left + (yr / maxYears) * cw; }
   function cy(val) { return pad.top + ch - (val / maxVal) * ch; }
 
-  // Grid
   ctx.strokeStyle = '#2e2e3d';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
@@ -714,7 +686,6 @@ function drawTilgung(schedMit, schedOhne, darlehen) {
     ctx.fillText(yr + 'J', xx, H - pad.bottom + 16);
   }
 
-  // 10-year marker
   ctx.strokeStyle = 'rgba(251,146,60,.5)';
   ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.moveTo(cx(10), pad.top); ctx.lineTo(cx(10), pad.top + ch); ctx.stroke();
@@ -722,19 +693,16 @@ function drawTilgung(schedMit, schedOhne, darlehen) {
   ctx.fillStyle = 'rgba(251,146,60,.9)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText('10J', cx(10), pad.top - 8);
 
-  // Cumulative interest (red)
   ctx.strokeStyle = 'rgba(248,113,113,.65)'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.moveTo(cx(0), cy(0));
   for (const s of schedOhne) ctx.lineTo(cx(s.year), cy(Math.min(s.cumInterest, maxVal)));
   ctx.stroke();
 
-  // Cumulative principal (green)
   ctx.strokeStyle = 'rgba(74,222,128,.75)'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.moveTo(cx(0), cy(0));
   for (const s of schedOhne) ctx.lineTo(cx(s.year), cy(Math.min(s.cumPrincipal, maxVal)));
   ctx.stroke();
 
-  // Balance without sonder (dashed orange)
   if (schedOhne.length > 0) {
     ctx.strokeStyle = 'rgba(251,146,60,.35)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
     ctx.beginPath(); ctx.moveTo(cx(0), cy(darlehen));
@@ -742,18 +710,16 @@ function drawTilgung(schedMit, schedOhne, darlehen) {
     ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // Balance with sonder (solid orange)
   ctx.strokeStyle = '#fb923c'; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(cx(0), cy(darlehen));
   for (const s of schedMit) { ctx.lineTo(cx(s.year), cy(s.balance)); if (s.balance <= 0) break; }
   ctx.stroke();
 
-  // Start dot
   ctx.fillStyle = '#fb923c';
   ctx.beginPath(); ctx.arc(cx(0), cy(darlehen), 4, 0, Math.PI * 2); ctx.fill();
 }
 
-// ─── Canvas: Wertentwicklung ──────────────────────────────────────────────────
+// ─── Canvas: Wertentwicklung ─────────────────────────────────────────────────────────────────────────────────
 function drawWert(kp) {
   const canvas = document.getElementById('chart-wert');
   const W = canvas.parentElement.clientWidth - 8;
@@ -778,7 +744,6 @@ function drawWert(kp) {
   function cx(yr)  { return pad.left + (yr / YEARS) * cw; }
   function cy(val) { return pad.top + ch - (val / maxVal) * ch; }
 
-  // Grid
   ctx.strokeStyle = '#2e2e3d'; ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const yy = pad.top + (i / 4) * ch;
@@ -793,14 +758,12 @@ function drawWert(kp) {
     ctx.fillText(yr + 'J', xx, H - pad.bottom + 16);
   }
 
-  // 10-year marker
   ctx.strokeStyle = 'rgba(251,146,60,.4)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.moveTo(cx(10), pad.top); ctx.lineTo(cx(10), pad.top + ch); ctx.stroke();
   ctx.setLineDash([]);
   ctx.fillStyle = 'rgba(251,146,60,.8)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText('10J', cx(10), pad.top - 8);
 
-  // Value lines
   for (let si = 0; si < rates.length; si++) {
     ctx.strokeStyle = colors[si]; ctx.lineWidth = 2.2;
     ctx.beginPath(); ctx.moveTo(cx(0), cy(kp));
@@ -808,14 +771,13 @@ function drawWert(kp) {
     ctx.stroke();
   }
 
-  // Purchase price label
   ctx.fillStyle = '#9090a8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
   ctx.fillText(fmtCompact(kp), cx(0) + 6, cy(kp) - 6);
   ctx.fillStyle = '#e8e8f0';
   ctx.beginPath(); ctx.arc(cx(0), cy(kp), 4, 0, Math.PI * 2); ctx.fill();
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// ─── Init ─────────────────────────────────────────────────────────────────────────────────────────
 update();
 window.addEventListener('resize', update);
 </script>
